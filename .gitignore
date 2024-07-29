@@ -1,0 +1,9 @@
+# python
+venv/
+
+# latex
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
