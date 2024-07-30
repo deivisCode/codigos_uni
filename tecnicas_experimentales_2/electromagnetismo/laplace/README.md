@@ -1,4 +1,5 @@
 ## Práctica de Laplace
+![4 graficas da practica de Laplace feitas de forma distinta](imaxes/graficas.jpg)
 
 Nesta práctica hai que tomar medidas dunha distribución de voltaxes nunha lámina 
 conductora. Logo, intentar representalos e comparalos dos datos proporcionados
