@@ -1,0 +1,30 @@
+% copiado de https://www.youtube.com/watch?v=LufMPezEN6Y
+
+\documentclass{article}
+
+% Solo temos que engadir este paquete e definir un par de cousas. Ollo, o paquete
+% como tal ten MOITA máis funcionalidade.
+\usepackage{datatool}
+
+% Qué separador teñen os datos
+\DTLsetseparator{,}
+
+% Creamos unha especie de 'base de datos' a partir dun arquivo. Se o arquivo
+% orixinal se modifica externamente, os cambios na base de datos aparecen
+% automáticamente
+\DTLloaddb[
+    noheader, % non temos unha primeira fila cos nomes
+    keys={columna1,columna2} %  en cambio usamos estos nomes
+]{valores}{datos.dat} % nome da base de datos, e nome do ficheiro
+
+% Para 'seleccionar' un dato concreto hai que usar un comando to largo:
+% \DTLfetch{datos}{columna1}{DATO}{columna2}
+% asique é mellor crear un comando novo, \var
+\newcommand{\var}[1]{\DTLfetch{valores}{columna1}{#1}{columna2}}
+
+\begin{document}
+
+% do arquivo orixinal, colle o valor da segunda columna, asociado a 'constante_G'
+Buenas, o numero \var{constante_G} ven de python!!
+
+\end{document}
