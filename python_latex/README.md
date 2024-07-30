@@ -11,7 +11,7 @@ constante G. Na nosa memoria podemos escribir directamente
 
 \begin{document}
 
-A constante da gravitación univeral vale 59 
+A constante da gravitación univeral vale 59
 
 \end{document}
 ```
@@ -31,7 +31,7 @@ arquivo e formato específicos, e logo lendo dito arquivo dende latex para chama
 o dato concreto.
 
 O arquivo test.py so ten a definicion dunha funcion que garda un dato no formato
-requerido, pero non é un arquivo necesario, o importante é ter os datos 
+requerido, pero non é un arquivo necesario, o importante é ter os datos
 nun formato tipo
 
 ```

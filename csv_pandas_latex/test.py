@@ -1,7 +1,7 @@
 import pandas as pd
 
 datos = pd.read_csv(
-    "datos.csv", 
+    "datos.csv",
     header = 0 # qué fila usar pos nomes das columnas
 )
 

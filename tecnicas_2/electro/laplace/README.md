@@ -1,9 +1,9 @@
 ## Práctica de Laplace
 ![4 graficas da practica de Laplace feitas de forma distinta](imaxes/graficas.jpg)
 
-Nesta práctica hai que tomar medidas dunha distribución de voltaxes nunha lámina 
+Nesta práctica hai que tomar medidas dunha distribución de voltaxes nunha lámina
 conductora. Logo, intentar representalos e comparalos dos datos proporcionados
-polor profesores. 
+polor profesores.
 
 No guión menciónanse 2 maneiras de tomar os datos. Personalmente creo que tomar
 datos equispaciados nunha rexión concreta é a mellor maneira. A idea é gardar
@@ -19,15 +19,15 @@ Algo confuso neste programa é a funcion `meshgrid`. Facendo np.meshgrid(x,y) ob
 dous arrays similares a estos:
 
 ```
-  7   7   7   7  ..  7   7   7   7   7  
-  6   6   6   6  ..  6   6   6   6   6  
-  5   5   5   5  ..  5   5   5   5   5  
-  4   4   4   4  ..  4   4   4   4   4  
- ..  ..  ..  ..  .. ..  ..  ..  ..  ..  
- -2  -2  -2  -2  .. -2  -2  -2  -2  -2  
- -3  -3  -3  -3  .. -3  -3  -3  -3  -3  
- -4  -4  -4  -4  .. -4  -4  -4  -4  -4  
- -5  -5  -5  -5  .. -5  -5  -5  -5  -5  
+  7   7   7   7  ..  7   7   7   7   7
+  6   6   6   6  ..  6   6   6   6   6
+  5   5   5   5  ..  5   5   5   5   5
+  4   4   4   4  ..  4   4   4   4   4
+ ..  ..  ..  ..  .. ..  ..  ..  ..  ..
+ -2  -2  -2  -2  .. -2  -2  -2  -2  -2
+ -3  -3  -3  -3  .. -3  -3  -3  -3  -3
+ -4  -4  -4  -4  .. -4  -4  -4  -4  -4
+ -5  -5  -5  -5  .. -5  -5  -5  -5  -5
 ```
 
 ```
