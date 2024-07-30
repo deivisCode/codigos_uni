@@ -9,7 +9,7 @@ datos equispaciados nunha rexión concreta é a mellor maneira. A idea é gardar
 os datos nun arquivo CSV que corresponda, visualmente, á propia lámina
 conductora. É dicir, algo así (véxase o arquivo datos.csv):
 
-![lámina cos datos dos voltaxes](imaxes\lamina.jgp)
+![lámina cos datos dos voltaxes](imaxes/lamina.jpg)
 
 No lado esquero represento as posicións que chamarei 'y', e abaixo as 'x'.
 
