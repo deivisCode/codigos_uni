@@ -35,6 +35,7 @@ voltaxe & intensidade \\
 no directorio onde están os arquivos:
 ```
 python -m venv venv
+.\venv\Scripts\activate
 pip install -r requirements.txt
 ```
 ### Coa Makefile (só windows, e non prometo que funcione)
