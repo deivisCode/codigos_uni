@@ -1,6 +1,6 @@
 
 import numpy as np
-import numpy.typing as npt  # opcional, pa especificar os tipos de datos nas funcions
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
@@ -124,15 +124,13 @@ ventana = plt.figure("Ventana de datos")
 #   que ocupe tantas filas ou columnas.
 
 # Neste exemplo usarei 'add_subplot'
-lenzo_1 = ventana.add_subplot(3,1,(1,2))
-lenzo_2 = ventana.add_subplot(3,1,3)
+lenzo = ventana.add_subplot()
 
 # Unha vez temos os lenzos creados, podemos facerlle perradas a base de
 # lenzo.plot(), lenzo.scatter(), lenzo.violinplot(), etc.
-lenzo_1.plot(tempos, posicions_axustadas, color="gray", label="Axuste")
-lenzo_1.plot(tempos, posicions, color="red", marker=".", linestyle="", label="Datos Orixinais")
-lenzo_2.stem(tempos, residuos, linefmt="gray", markerfmt="r_", basefmt="k")
-# son os datos do axuste, as posicions experimentales, e or residuos
+lenzo.plot(tempos, posicions_axustadas, color="gray", label="Axuste")
+lenzo.plot(tempos, posicions, color="red", marker=".", linestyle="", label="Datos Orixinais")
+# son os datos do axuste, as posicions experimentales
 
 # Neste caso usamos directamente lenzo.plot() e non o gardamos nunha variable,
 # variable = lenzo.plot(), porque o obxeto do 'plot' non o vamos necesitar
@@ -147,12 +145,70 @@ lenzo_2.stem(tempos, residuos, linefmt="gray", markerfmt="r_", basefmt="k")
 # Se non o nomeamos non o podemos chamar despois
 
 # Podemos engadirlle algúns detalles aos lenzos:
-lenzo_1.set(ylabel="Posicions")
-lenzo_2.set(title="Residuos", xlabel="Tempos (s)")
-# E activamos a lenda
-ventana.legend()
+lenzo.set(ylabel="Posicions")
+
+# Extra: Engadir formas (un rectángulo) --------------------------------
+
+# Coordenadas x do rectangulo
+a = 250
+b = 350
+ancho = b - a
+
+# É necesario especificar o punto (x,y) onde se pon o rectangulo. Pode set
+# calquer punto do lenzo, pero neste caso quero que quede ben colocado asique
+# escollo o seguinte
+anclaxe_rectangulo = (
+    a, # coordenada x
+    # coordenada y. 'get_ylim()' devolve os valores y
+    # inferiores e superiores. O punto de anclaxe do rectángulo é a súa esquina
+    # inferior esquerda, asique necesito get_ylim()[0]
+    lenzo.get_ylim()[0]
+)
+
+# diferenzas de altura do lenzo
+alto = lenzo.get_ylim()[1] - lenzo.get_ylim()[0]
+
+# Ollo. No anclaxe e do alto fíxeno así para que no caso de cambiar os tamaños
+# das cousas (escala, datos, etc.) o tamaño e posicions do rectangulo cambien
+# adecuadamente. Por poder, pódese poñer a man 'alto=468.131', pero é engorroso
+
+# O propio obxeto rectángulo. Primeiro hai que crealo cos datos que puxen antes
+rectangulo = mpl.patches.Rectangle(
+    anclaxe_rectangulo,
+    ancho,
+    alto,
+    facecolor = "orange",
+    alpha = 0.3,
+    label = "Zona interesante"
+)
+
+# E Logo engadilo directamente so lenzo
+lenzo.add_patch(rectangulo)
+
+# Extra: Engadir unha zona con ZOOM (inset axis) -----------------------
+
+# Coordenadas da imaxe ampliada (esquina  inferior esquerda)
+x = 1350
+y = 170
+ancho = 400
+alto = 50
+
+zoom = lenzo.inset_axes(
+    (x,y,ancho,alto),
+    xlim = (1600,1680),
+    ylim = (140,160),
+    transform = lenzo.transData,
+    xticklabels = [],
+    yticklabels = []
+)
+zoom.plot(tempos, posicions_axustadas, color="gray", label="Axuste")
+zoom.errorbar(tempos, posicions, yerr=incertezas, color="red", marker=".", linestyle="", label="Datos Orixinais")
+lenzo.indicate_inset_zoom(zoom,edgecolor = "black")
+
 
 # Finalmente, para gardar a imaxe
-ventana.savefig("imaxe_preciosa.png")
+# ventana.savefig("imaxe_preciosa.png")
 # E mostrámola!
+# E activamos a lenda
+# ventana.legend()
 plt.show()
