@@ -124,7 +124,7 @@ ventana = plt.figure("Ventana de datos")
 #   que ocupe tantas filas ou columnas.
 
 # Neste exemplo usarei 'add_subplot'
-lenzo = ventana.add_subplot()
+lenzo = ventana.add_subplot(ylim=(60,240))
 
 # Unha vez temos os lenzos creados, podemos facerlle perradas a base de
 # lenzo.plot(), lenzo.scatter(), lenzo.violinplot(), etc.
@@ -145,7 +145,7 @@ lenzo.plot(tempos, posicions, color="red", marker=".", linestyle="", label="Dato
 # Se non o nomeamos non o podemos chamar despois
 
 # Podemos engadirlle algúns detalles aos lenzos:
-lenzo.set(ylabel="Posicions")
+lenzo.set(ylabel="Posicions (cm)",xlabel="Tempo (s)")
 
 # Extra: Engadir formas (un rectángulo) --------------------------------
 
@@ -184,31 +184,53 @@ rectangulo = mpl.patches.Rectangle(
 
 # E Logo engadilo directamente so lenzo
 lenzo.add_patch(rectangulo)
+# E activamos a lenda
+ventana.legend(loc = (0.7,0.1))
 
 # Extra: Engadir unha zona con ZOOM (inset axis) -----------------------
 
 # Coordenadas da imaxe ampliada (esquina  inferior esquerda)
-x = 1350
+x = 1350 
 y = 170
 ancho = 400
 alto = 50
 
 zoom = lenzo.inset_axes(
+    # Onde queremos poñer a zona aumentada
     (x,y,ancho,alto),
+    # Esto é pa usar coordenadas 'absolutas' en vez de relativas. Por defecto
+    # hai que poñer esa posicion como (0.5,0.2,0.6,0.2), é dicir, porcentaxes
+    # relativos ao tamaño total do lenzo. Peronalmente prefiero poñer as
+    # coordenadas exactas, asique uso transform = lenzo.transData
+    transform = lenzo.transData,
+    # Onde queremos facer o zoom en sí. Esto sempre son coordenadas 'absolutas'
     xlim = (1600,1680),
     ylim = (140,160),
-    transform = lenzo.transData,
+    # Desactivolle os numeriños aos eixos, queda máis limpo
     xticklabels = [],
     yticklabels = []
 )
+
+# lenzo.inset_axes(...) devolve outro obxeto de tipo 'axe', polo que podemos
+# pintar nel, engadir titulos, etc. como se fose un lenzo calqueira
 zoom.plot(tempos, posicions_axustadas, color="gray", label="Axuste")
-zoom.errorbar(tempos, posicions, yerr=incertezas, color="red", marker=".", linestyle="", label="Datos Orixinais")
+zoom.errorbar(
+    tempos,
+    posicions,
+    yerr=incertezas,
+    color="red",
+    ecolor = "black",
+    marker=".",
+    linestyle="",
+    label="Datos Orixinais",
+)
+zoom.set(title="Zona con datos inventados")
+
+# Para mostrar a zona onde tamos facendo o zoom, ponse:
 lenzo.indicate_inset_zoom(zoom,edgecolor = "black")
 
 
 # Finalmente, para gardar a imaxe
-# ventana.savefig("imaxe_preciosa.png")
+ventana.savefig("grafica.png")
 # E mostrámola!
-# E activamos a lenda
-# ventana.legend()
 plt.show()
