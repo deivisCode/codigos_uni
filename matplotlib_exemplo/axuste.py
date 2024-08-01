@@ -86,7 +86,7 @@ incertezas = np.array([1.0] * len(posicions))
 #   'matplotlibrc' lese automáticamente sempre que estea no mesmo directorio
 #   que o programa que teamos rulando, polo que non temos que requerilo nin
 #   importalo. No caso dunha configuración *.mplstyle, debemos importala no
-#   programa usando plt.style.use("meu_estilo.mplstyle"). 
+#   programa usando plt.style.use("meu_estilo.mplstyle").
 #
 # A orde de preferencia das configuracións é
 # rcParams > *.mplstyle > matplotlibrc
@@ -190,7 +190,7 @@ ventana.legend(loc = (0.7,0.1))
 # Extra: Engadir unha zona con ZOOM (inset axis) -----------------------
 
 # Coordenadas da imaxe ampliada (esquina  inferior esquerda)
-x = 1350 
+x = 1350
 y = 170
 ancho = 400
 alto = 50
