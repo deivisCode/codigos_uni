@@ -1,6 +1,6 @@
 ![grafica de exemplo](grafica.jpg)
 
-## Exemplo de matplotlib con moitas cousas
+## Mini exemplos de matplotlib
 
 - Interfaz OOP
 - matplotlibrc

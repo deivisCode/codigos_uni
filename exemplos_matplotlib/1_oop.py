@@ -1,6 +1,5 @@
 
 import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
@@ -10,13 +9,14 @@ import matplotlib.pyplot as plt
 posicions = np.loadtxt(r"datos\datos.csv")
 posicions_axustadas = np.loadtxt(r"datos\datos_axustados.dat")
 
-# Pode ser relevante ter a resta
-residuos = posicions - posicions_axustadas
-
-# Tamén necesitamos datos dos tempos e das incretezas. Invéntomos. Para os
-# tempos, creo un array de 10 en 10. Para as incertezas, un array cheo de 1.0s
+# Tamén necesitamos datos dos tempos. Invéntomos. Para os tempos, creo un array
+# de 10 en 10.
 tempos = np.arange(0, 10 * len(posicions), 10)
-incertezas = np.array([1.0] * len(posicions))
+
+# Tamén pode ser relevante ter os residuos (experimento - axuste) e as incertezas. 
+# Neste caso non as vou usar pero nalgún programa dos seguintes si
+# residuos = posicions - posicions_axustadas
+# incertezas = np.array([1.0] * len(posicions))
 
 # APARTADO GRÁFICO ================
 
@@ -43,7 +43,7 @@ incertezas = np.array([1.0] * len(posicions))
 # Entonces:
 # ventana --> obxeto de tipo 'figure', obxeto base
 # lenzo   --> obxeto de tipo 'axe', asociado ao obxeto 'figure'
-# plot, scatter, ticks, label --> obxetos de tipo 'Line2D,Text', asociados a un 'axe'
+# plot, stem, scatter, ticks, label --> obxetos de tipo 'Line2D,Text', asociados a un 'axe'
 
 # ESTILO
 # Para cambiar cores, grosores, opacidades, tamaños, etc. podemos proceder
@@ -129,7 +129,9 @@ lenzo = ventana.add_subplot(ylim=(60,240))
 # Unha vez temos os lenzos creados, podemos facerlle perradas a base de
 # lenzo.plot(), lenzo.scatter(), lenzo.violinplot(), etc.
 lenzo.plot(tempos, posicions_axustadas, color="gray", label="Axuste")
-lenzo.plot(tempos, posicions, color="red", marker=".", linestyle="", label="Datos Orixinais")
+lenzo.plot(
+    tempos, posicions, color="red", marker=".", linestyle="", label="Datos Orixinais"
+)
 # son os datos do axuste, as posicions experimentales
 
 # Neste caso usamos directamente lenzo.plot() e non o gardamos nunha variable,
@@ -145,92 +147,14 @@ lenzo.plot(tempos, posicions, color="red", marker=".", linestyle="", label="Dato
 # Se non o nomeamos non o podemos chamar despois
 
 # Podemos engadirlle algúns detalles aos lenzos:
-lenzo.set(ylabel="Posicions (cm)",xlabel="Tempo (s)")
-
-# Extra: Engadir formas (un rectángulo) --------------------------------
-
-# Coordenadas x do rectangulo
-a = 250
-b = 350
-ancho = b - a
-
-# É necesario especificar o punto (x,y) onde se pon o rectangulo. Pode set
-# calquer punto do lenzo, pero neste caso quero que quede ben colocado asique
-# escollo o seguinte
-anclaxe_rectangulo = (
-    a, # coordenada x
-    # coordenada y. 'get_ylim()' devolve os valores y
-    # inferiores e superiores. O punto de anclaxe do rectángulo é a súa esquina
-    # inferior esquerda, asique necesito get_ylim()[0]
-    lenzo.get_ylim()[0]
+lenzo.set(
+    title  = "Gráfica sinusoide exponencial decrecente UwU",
+    ylabel = "Posicions (cm)",
+    xlabel = "Tempo (s)"
 )
-
-# diferenzas de altura do lenzo
-alto = lenzo.get_ylim()[1] - lenzo.get_ylim()[0]
-
-# Ollo. No anclaxe e do alto fíxeno así para que no caso de cambiar os tamaños
-# das cousas (escala, datos, etc.) o tamaño e posicions do rectangulo cambien
-# adecuadamente. Por poder, pódese poñer a man 'alto=468.131', pero é engorroso
-
-# O propio obxeto rectángulo. Primeiro hai que crealo cos datos que puxen antes
-rectangulo = mpl.patches.Rectangle(
-    anclaxe_rectangulo,
-    ancho,
-    alto,
-    facecolor = "orange",
-    alpha = 0.3,
-    label = "Zona interesante"
-)
-
-# E Logo engadilo directamente so lenzo
-lenzo.add_patch(rectangulo)
-# E activamos a lenda
-ventana.legend(loc = (0.7,0.1))
-
-# Extra: Engadir unha zona con ZOOM (inset axis) -----------------------
-
-# Coordenadas da imaxe ampliada (esquina  inferior esquerda)
-x = 1350
-y = 170
-ancho = 400
-alto = 50
-
-zoom = lenzo.inset_axes(
-    # Onde queremos poñer a zona aumentada
-    (x,y,ancho,alto),
-    # Esto é pa usar coordenadas 'absolutas' en vez de relativas. Por defecto
-    # hai que poñer esa posicion como (0.5,0.2,0.6,0.2), é dicir, porcentaxes
-    # relativos ao tamaño total do lenzo. Peronalmente prefiero poñer as
-    # coordenadas exactas, asique uso transform = lenzo.transData
-    transform = lenzo.transData,
-    # Onde queremos facer o zoom en sí. Esto sempre son coordenadas 'absolutas'
-    xlim = (1600,1680),
-    ylim = (140,160),
-    # Desactivolle os numeriños aos eixos, queda máis limpo
-    xticklabels = [],
-    yticklabels = []
-)
-
-# lenzo.inset_axes(...) devolve outro obxeto de tipo 'axe', polo que podemos
-# pintar nel, engadir titulos, etc. como se fose un lenzo calqueira
-zoom.plot(tempos, posicions_axustadas, color="gray", label="Axuste")
-zoom.errorbar(
-    tempos,
-    posicions,
-    yerr=incertezas,
-    color="red",
-    ecolor = "black",
-    marker=".",
-    linestyle="",
-    label="Datos Orixinais",
-)
-zoom.set(title="Zona con datos inventados")
-
-# Para mostrar a zona onde tamos facendo o zoom, ponse:
-lenzo.indicate_inset_zoom(zoom,edgecolor = "black")
-
 
 # Finalmente, para gardar a imaxe
-ventana.savefig("grafica.png")
+# ventana.savefig("grafica.png")
 # E mostrámola!
 plt.show()
+
