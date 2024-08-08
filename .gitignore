@@ -1,6 +1,7 @@
 # python
 venv/
 __pycache__/
+python.err
 
 # latex
 *.aux
@@ -8,3 +9,4 @@ __pycache__/
 *.fls
 *.log
 *.pdf
+tex.err
