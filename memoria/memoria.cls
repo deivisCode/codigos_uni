@@ -14,7 +14,7 @@
 % IDIOMA =======================================================================
 \RequirePackage[galician]{babel} % usar galego (como debe ser)
 % Usar babel pode fastidiar as citas con biblatex, asique hai que usar 'csquotes'
-\RequirePackage{csquotes} 
+\RequirePackage{csquotes}
 
 % XEOMETRÍA DO DOCUMENTO =======================================================
 \RequirePackage[
@@ -89,7 +89,7 @@
 
 % CAPTIONS =====================================================================
 % Para cambiar cousas relacionadas cos estilos das figuras, tablas, etc.
-\RequirePackage{caption} 
+\RequirePackage{caption}
 % estilos das figuras
 \captionsetup[figure]{
     labelfont=bf, % tipografia suada
@@ -108,7 +108,7 @@
 % COLORES ======================================================================
 % 'xcolor' pa definir cores e toda a vaina. Opción 'table' pa poder colorear
 % celdas usando \cellcolor
-\RequirePackage[table]{xcolor} 
+\RequirePackage[table]{xcolor}
 
 % OLVIDONA =====================================================================
 % paquetes que non recordo pa que os quero
@@ -116,7 +116,7 @@
 
 % EXTRAS =======================================================================
 % Para encaixar mellor o texto (a veces fállame pero vese ben)
-% \RequirePackage{microtype} 
+% \RequirePackage{microtype}
 % Para crear un cadro con texto dentro to guapo
 % \RequirePackage{framed}
 % Para colocar texto de 'proba' pa ver se as cousas encaixan ben
