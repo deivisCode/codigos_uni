@@ -9,4 +9,7 @@ python.err
 *.fls
 *.log
 *.pdf
+*.out
+*.run.xml
 tex.err
+tex.err.bak
