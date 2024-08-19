@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt  # opcional, pa especificar os tipos de datos nas funcions
 # import matplotlib.pyplot as plt
 import scipy.optimize as sco
 # from scipy.interpolate import CubicSpline
@@ -34,9 +35,9 @@ for i in range(cantas_series):
     series[i][0] = series[i][0] / (10 ** 6) # Volumes. mL -> m^3
     series[i][1] = series[i][1] * (10 ** 5) # Presions. bar -> Pa
 
-# Agora gardo estos datos ben colocadiños
+# Agora gardo estos datos ben colocadiños. Así poderemos usalos noutros programillas
 for i in range(cantas_series):
-    np.savetxt(rf"resultados\serie_{i+1}_presion_volumen.txt",series[i])
+    np.savetxt(rf"resultados\serie_{i+1}_volumen_presion.txt",series[i])
 
 
 # A continuacion as incertezas. Considerámolas de 0.1 mL e 0.1 bar
@@ -161,6 +162,7 @@ masa_etano = masa_molar_etano * media_moles
 virial_x = []
 virial_y = []
 incertezas_virial_y = []
+
 for serie,temperatura in zip(series_zona_ideal,temperaturas):
 
     virial_x.append( # 1 / v
@@ -179,7 +181,11 @@ for serie,temperatura in zip(series_zona_ideal,temperaturas):
         )
     )
 
-# Como sempre, paso estas listas a arrays
+# Como sempre, paso estas listas a arrays. Pa que quede claro, 'virial_x' é
+# unha lista de arrays. Cada array corresponde a unha serie de datos. Cada
+# array ten 16 (creo) datos, que corresponden aos 16 valores que temos na zona
+# ideal. En total temos 12 arrays (series). As 3 variables seguintes teñen a
+# mesma estructura
 virial_x = np.array(virial_x)
 virial_y = np.array(virial_y)
 incertezas_virial_y = np.array(incertezas_virial_y)
@@ -198,7 +204,6 @@ for i in range(cantas_series):
 regresions_virial = np.array(regresions_virial)
 
 # gardo os datos pa usalos cos outros programas
-# np.savetxt(r"resultados\virial.txt",np.vstack([virial_x,virial_y,incertezas_virial_y]))
 np.savetxt(r"resultados\virial_x.txt",virial_x)
 np.savetxt(r"resultados\virial_y.txt",virial_y)
 np.savetxt(r"resultados\incertezas_virial_y.txt",incertezas_virial_y)
@@ -239,8 +244,9 @@ incerteza_media_B = np.std(coef_B_virial) ** 2
 # porque a temperatura é un dato experimental. O que fixen foi definir unha
 # funcion dentro doutra función. Sinceramente non me vexo capaz de explicar
 # esto (levo unhas 20 e pico horas desperto), pódese buscar en google como
-# 'nested/inner/encapsulated functions'
-def xerador_van_der_waals(t):
+# 'nested/inner/encapsulated functions'. (O de chamalo 'xerador' é cousa miña,
+# con malo pos nomes)
+def xerador_van_der_waals(t: float) -> npt.ArrayLike:
     """Calcula o valor da presion en funcion do volumen
     molar e da temperatura.
 
@@ -252,7 +258,7 @@ def xerador_van_der_waals(t):
     Os primeiros parámetros son (t)
     Os da funcion interior son (v,a,b)"""
 
-    def van_der_waals(v,a,b):
+    def van_der_waals(v: npt.ArrayLike,a,b):
 
         R = 8.31446261815324  # J / mol K , Tabulada pola wikipedia
         presion = (R * t)/(v - b) - a/(v**2)
