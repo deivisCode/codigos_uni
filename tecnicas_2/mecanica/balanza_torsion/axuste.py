@@ -179,98 +179,103 @@ beta = (b**3) / ((b**2 + 4 * (d**2)) ** (3 / 2))
 sbeta = 0 # non recordo por qué pero digo que é 0
 
 # Agora a parte máis puñetera. A constante G. Aplicando a fórmula directamente:
-G = (pi**2 * b**2 * d * dx) / (M * L * periodo **2 * (1 - beta))
+def constante_G(
+    distancia_bolas: float,
+    distancia_eixo_xiro: float,
+    diferenza_equilibrio: float,
+    masa_grande: float,
+    distancia_parede: float,
+    periodo: float,
+    beta: float,
+) -> float:
+    """Calcula a constante G
 
-# Para a sua incerteza, hai que calcular MOITAS derivadas, asique creo varias
-# variables e vamos pouco a pouco. G_b, é a derivada da formula de G respecto de b
-G_b    = ( (pi**2)*2*b*d*dx)      / ((1-beta)*M*L*(periodo**2))      # G respecto a b
-G_dx   = ( (pi**2)*(b**2)*d )     / ( M*L*(periodo**2)*(1-beta) )    # G respecto a dx
-G_M    = ( (pi**2)*(b**2)*d*dx )  / (L*(periodo**2)*(1-beta)*(M**2)) # G respecto a M
-G_L    = ( (pi**2)*(b**2)*d*dx )  / (M*(periodo**2)*(1-beta)*(L**2)) # G respecto a b
-G_T    = ( (pi**2)*(b**2)*d*dx*2) / (M*L*(1-beta)*(periodo**3))      # G respecto a L
-G_beta = ( (pi**2)*(b**2)*d*dx )  / (M*L*(periodo**2)*((1-beta)**2)) # G respecto a beta
+    distancia_bolas (b) : distancia entre bolas pequenas e grandes
+    distancia_eixo_xiro (d) : distancia eixo de xiro ao centro das masas pequenas
+    diferenza_equilibrio (dx) : diferenza na posición de equillibrio
+    masa_grande (M) : masa grande
+    distancia_parede (L) :  distancia espello-parede
+    periodo (T) : periodo de oscilación do pendulo
+    beta : non sei que e beta
+    """
+    G = (pi**2 * distancia_bolas * diferenza_equilibrio) / (
+        masa_grande * distancia_parede * periodo**2 * (1 - beta)
+    )
 
-# E combínase todo. sG := s(G)
-sG = np.sqrt(
-    (G_b * sb) ** 2
-    + (G_dx * sdx) ** 2
-    + (G_M * sM) ** 2
-    + (G_L * sL) ** 2
-    + (G_T * incerteza_periodo) ** 2
-    + (G_beta * sbeta) ** 2
+    print(periodo)
+
+    return G
+
+G = constante_G(b,d,dx,M,L,periodo,beta)
+
+def incerteza_constante_G(
+    distancia_bolas: float,
+    distancia_eixo_xiro: float,
+    diferenza_equilibrio: float,
+    masa_grande: float,
+    distancia_parede: float,
+    periodo: float,
+    beta: float,
+    incerteza_distancia_bolas: float,
+    incerteza_distancia_eixo_xiro: float,
+    incerteza_diferenza_equilibrio: float,
+    incerteza_masa_grande: float,
+    incerteza_distancia_parede: float,
+    incerteza_periodo: float,
+    incerteza_beta: float
+) -> float:
+    """ Calcula a incerteza da constante G por propagación
+
+    distancia_bolas (b) : distancia entre bolas pequenas e grandes
+    distancia_eixo_xiro (d) : distancia eixo de xiro ao centro das masas pequenas
+    diferenza_equilibrio (dx) : diferenza na posición de equillibrio
+    masa_grande (M) : masa grande
+    distancia_parede (L) :  distancia espello-parede
+    periodo (T) : periodo de oscilación do pendulo
+    beta : non sei que e beta
+
+    As variables finales son as incertezas na mesma orde aqui escrita
+    """
+
+    # Para a sua incerteza, hai que calcular MOITAS derivadas, asique creo varias
+    # variables e vamos pouco a pouco.
+
+    # G respecto a b
+    parcial_b    = ( (pi ** 2) *  2 * b   * d * dx     ) /  (  M    *    L    *   (periodo ** 2) * (1-beta) )
+    # G respecto a dx
+    parcial_dx   = ( (pi ** 2) * (b ** 2) * d          ) /  (  M    *    L    *   (periodo ** 2) * (1-beta) )
+    # G respecto a M
+    parcial_M    = ( (pi ** 2) * (b ** 2) * d * dx     ) /  ( (M ** 2) * L    *   (periodo ** 2) * (1-beta) )
+    # G respecto a L
+    parcial_L    = ( (pi ** 2) * (b ** 2) * d * dx     ) /  (  M    *  (L ** 2) * (periodo ** 2) * (1-beta) )
+    # G respecto a T
+    parcial_T    = ( (pi ** 2) * (b ** 2) * d * dx * 2 ) /  (  M    *    L    *   (periodo ** 3) * (1-beta) )
+    # G respecto a beta
+    parcial_beta = ( (pi ** 2) * (b ** 2) * d * dx     ) /  (  M    *    L    *   (periodo ** 2) * ((1-beta) ** 2))
+
+    return np.sqrt(
+        parcial_b * incerteza_distancia_bolas * 2
+        + parcial_dx * incerteza_diferenza_equilibrio ** 2
+        + parcial_M * incerteza_masa_grande ** 2
+        + parcial_L * incerteza_distancia_parede ** 2
+        + parcial_T * incerteza_periodo ** 2
+        + parcial_beta * incerteza_beta ** 2
+    )
+
+sG = incerteza_constante_G(
+    b, d, dx, M, L, periodo, beta, sb, sd, sdx, sM, sL, periodo, sbeta
 )
+
 
 # E con esto xa estaría. Sin embargo, por desgracia tamén piden que calculemos ante qué
 # variable é mais sensible 'G'. Personalmente o que fixen foi incrementar as
 # incertezas nun 10% e logo ver en qué caso hai mais diferenza
-incremento_b    = sb    + 0.1 * sb
-incremento_b    = sb    + 0.1 * sb
-incremento_dx   = sdx   + 0.1 * sdx
-incremento_M    = sM    + 0.1 * sM
-incremento_L    = sL    + 0.1 * sL
-incremento_T    = incerteza_periodo    + 0.1 * incerteza_periodo
-incremento_beta = sbeta + 0.1 * sbeta
-
-G_variando_sb = np.sqrt(
-    (G_b * incremento_b) ** 2
-    + (G_dx * sdx) ** 2
-    + (G_M * sM) ** 2
-    + (G_L * sL) ** 2
-    + (G_T * incerteza_periodo) ** 2
-    + (G_beta * sbeta) ** 2
-)
-
-G_variando_sdx = np.sqrt(
-    (G_b * sb) ** 2
-    + (G_dx * incremento_dx) ** 2
-    + (G_M * sM) ** 2
-    + (G_L * sL) ** 2
-    + (G_T * incerteza_periodo) ** 2
-    + (G_beta * sbeta) ** 2
-)
-
-G_variando_sM = np.sqrt(
-    (G_b * sb) ** 2
-    + (G_dx * sdx) ** 2
-    + (G_M * incremento_M) ** 2
-    + (G_L * sL) ** 2
-    + (G_T * incerteza_periodo) ** 2
-    + (G_beta * sbeta) ** 2
-)
-
-G_variando_sL = np.sqrt(
-    (G_b * sb) ** 2
-    + (G_dx * sdx) ** 2
-    + (G_M * sM) ** 2
-    + (G_L * incremento_L) ** 2
-    + (G_T * incerteza_periodo) ** 2
-    + (G_beta * sbeta) ** 2
-)
-
-G_variando_sT = np.sqrt(
-    (G_b * sb) ** 2
-    + (G_dx * sdx) ** 2
-    + (G_M * sM) ** 2
-    + (G_L * sL) ** 2
-    + (G_T * incremento_T) ** 2
-    + (G_beta * sbeta) ** 2
-)
-
-G_variando_sbeta = np.sqrt(
-    (G_b * sb) ** 2
-    + (G_dx * sdx) ** 2
-    + (G_M * sM) ** 2
-    + (G_L * sL) ** 2
-    + (G_T * incerteza_periodo) ** 2
-    + (G_beta * incremento_beta) ** 2
-)
-
-incremento_G_sb    = 100 - (sG * 100 / G_variando_sb)
-incremento_G_sdx   = 100 - (sG * 100 / G_variando_sdx)
-incremento_G_sM    = 100 - (sG * 100 / G_variando_sM)
-incremento_G_sL    = 100 - (sG * 100 / G_variando_sL)
-incremento_G_sT    = 100 - (sG * 100 / G_variando_sT)
-incremento_G_sbeta = 100 - (sG * 100 / G_variando_sbeta)
+# incremento_b    = sb    + 0.1 * sb
+# incremento_dx   = sdx   + 0.1 * sdx
+# incremento_M    = sM    + 0.1 * sM
+# incremento_L    = sL    + 0.1 * sL
+# incremento_T    = incerteza_periodo    + 0.1 * incerteza_periodo
+# incremento_beta = sbeta + 0.1 * sbeta
 
 # E gardamos os datos nun ficheiro
 with open("resultados.txt",'w') as ficheiro:
