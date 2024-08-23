@@ -78,7 +78,7 @@ del(temp)
 
 # Tamén o gardo en ficheiros aparte
 for i in range(cantas_series):
-    np.savetxt(rf"resultados\serie_{i+1}_presion_volumen_ideal.txt",series_zona_ideal[i])
+    np.savetxt(rf"resultados\serie_{i+1}_volumen_presion_ideal.txt",series_zona_ideal[i])
 
 
 # REGRESIONS LINEALES PARA OS MOLES
