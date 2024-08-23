@@ -2,12 +2,11 @@
 .DEFAULT_GOAL := rula
 
 PYTHON = .\venv\Scripts\python
-PIP = .\venv\Scripts\pip
 
 venv: requirements.txt
 	python -m venv venv
 	.\venv\Scripts\activate
-	$(PIP) install -r requirements.txt
+	$(PYTHON) -m pip install -r requirements.txt
 
 rula: venv
 	$(PYTHON) test.py
