@@ -334,13 +334,116 @@ media_b = np.mean(parametro_b[:9])
 incerteza_media_b = np.std(media_b) ** 2
 
 
+# densidades
+
+temp_critica = 304.55
+
+campana_entrada = np.loadtxt(
+    r"datos\campana_entrada.numpydata",
+    unpack = True,
+    delimiter = ','
+)
+v_campana_entrada = campana_entrada[0] / (10 ** 6)
+p_campana_entrada = campana_entrada[1] * (10 ** 5)
+
+campana_salida = np.loadtxt(
+    r"datos\campana_salida.numpydata",
+    unpack = True,
+    delimiter = ','
+)
+v_campana_salida = campana_salida[0] / (10 ** 6)
+p_campana_salida = campana_salida[1] * (10 ** 5)
 
 
+# As incertezas, a ollo
+incerteza_v_campana_entrada = 0.25e-7 # en m^3 directamente, a ollo
+incerteza_v_campana_salida = 1.5e-7 # en m^3 directamente, a ollo
+incerteza_p_campana_entrada = 0.01e6 # incerteza presions ao entrar na campana
+
+densidades_entrada = masa_etano / v_campana_entrada
+incerteza_densidades_entrada = np.sqrt(
+    masa_etano * incerteza_v_campana_entrada / (v_campana_entrada ** 2)
+)
+
+densidades_salida = masa_etano / v_campana_salida
+incerteza_densidades_salida = np.sqrt(
+    masa_etano * incerteza_v_campana_salida / (v_campana_salida ** 2)
+)
+
+suma_densidades = (densidades_entrada + densidades_salida) / 2
+incerteza_suma_densidades = np.sqrt(
+    (incerteza_densidades_entrada**2 + incerteza_densidades_salida**2) / 2
+)
+
+regresion_densidades = regresion(
+    temperaturas[temperaturas < temp_critica],
+    suma_densidades,
+    incerteza_suma_densidades,
+)
+ordenada_densidades = regresion_densidades[0]
+incerteza_ordenada_densidades = regresion_densidades[1]
+pendente_densidades = regresion_densidades[2]
+incerteza_pendente_densidades = regresion_densidades[3]
 
 
+densidades_totales = np.concatenate((densidades_entrada, np.flip(densidades_salida)))
+incerteza_densidades_totales = np.concatenate(
+    (incerteza_densidades_entrada, np.flip(incerteza_densidades_salida))
+)
+temperaturas_totales = np.concatenate(
+    (
+        temperaturas[temperaturas < temp_critica],
+        np.flip(temperaturas[temperaturas < temp_critica]),
+    )
+)
 
+def pol_cuadrado(x,a,b,c):
+    return a * (x**2) + b * x + c
 
+axuste_densidades = sco.curve_fit(
+    pol_cuadrado,
+    densidades_totales,
+    temperaturas_totales,
+    p0 = (1,1,1),
+)
 
+dens_a = axuste_densidades[0][0]
+dens_b = axuste_densidades[0][1]
+dens_c = axuste_densidades[0][2]
+
+s_dens_a = np.sqrt(np.diag(axuste_densidades[1]))[0]
+s_dens_b = np.sqrt(np.diag(axuste_densidades[1]))[1]
+s_dens_c = np.sqrt(np.diag(axuste_densidades[1]))[2]
+
+np.savetxt(
+    r"resultados\densidades_entrada.txt",
+    np.vstack((densidades_entrada, incerteza_densidades_entrada)),
+)
+
+np.savetxt(
+    r"resultados\densidades_salida.txt",
+    np.vstack((densidades_salida, incerteza_densidades_salida)),
+)
+
+np.savetxt(
+    r"resultados\densidades_suma.txt",
+    np.vstack((
+        suma_densidades,
+        incerteza_suma_densidades,
+    ))
+)
+
+np.savetxt(
+    r"resultados\densidades_coeficientes.txt", np.vstack((dens_a, dens_b, dens_c))
+)
+
+np.savetxt(
+    r"resultados\densidades_regresion.txt",
+    np.vstack((
+        pendente_densidades,
+        ordenada_densidades,
+    ))
+)
 
 
 #
