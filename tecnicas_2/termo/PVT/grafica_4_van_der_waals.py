@@ -1,27 +1,30 @@
+import os
+import pathlib
 
 import numpy as np
 import matplotlib.pyplot as plt
-from analise import xerador_van_der_waals
+from funcions import xerador_van_der_waals
 
-# estos son  os datos orixinais, nada novo por aquí
-datos = [
-    np.loadtxt(r"resultados\serie_1_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_2_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_3_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_4_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_5_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_6_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_7_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_8_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_9_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_10_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_11_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_12_volumen_presion.txt"),
-]
+# Esto é identico á grafica 1
+DIRETORIO_PRINCIPAL = str(pathlib.Path(__file__).parent.resolve())
+
+nomes_ficheiros = os.listdir(
+    DIRETORIO_PRINCIPAL + "\\resultados\\volumes_presions_SI\\"
+)
+datos = []
+for nome in nomes_ficheiros:
+    datos.append(
+        np.loadtxt(
+            DIRETORIO_PRINCIPAL + "\\resultados\\volumes_presions_SI\\" + nome,
+            unpack=True,  # os datos están por filas
+            dtype=np.float64,
+        )
+    )
+cantas_series = len(datos)
 
 # tamén fan falta temperatura e moles
-temperaturas = np.loadtxt(r"datos\temperaturas.numpydata")
-moles = np.loadtxt(r"resultados\moles.txt") # n, s(n)
+temperaturas = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\temperaturas.txt")
+moles = np.loadtxt(DIRETORIO_PRINCIPAL + "\\resultados\\moles_numero.txt") # n, s(n)
 
 # agora os datos dos parámetros. Como recordatorio, teñen esta forma. 12 series
 # en total
@@ -39,7 +42,7 @@ moles = np.loadtxt(r"resultados\moles.txt") # n, s(n)
 #  [ 3.14474474e-01 -2.93604925e-08  2.11296134e+00  8.29918624e-04]
 #  [ 3.03528812e-01  8.31609329e-09  1.32958716e+00  5.31555711e-04]
 #  [ 2.64412643e-01 -3.19707305e-09  5.05079647e-01  2.01928174e-04]]
-parametros = np.loadtxt(r"resultados\axuste_vdw.txt")
+parametros = np.loadtxt(DIRETORIO_PRINCIPAL + "\\resultados\\vdw_axustes.txt")
 
 ventana = plt.figure(
     num     = "Axustes de Van der Waals",
@@ -48,58 +51,79 @@ ventana = plt.figure(
 
 # De aquí en adiante é case idéntico ás gráficas anteriores, asique non me
 # molesto en explicalo moito
+raiz  = np.sqrt(cantas_series)
+techo = np.ceil(raiz)
+chan  = np.floor(raiz)
+
+if chan * chan == cantas_series:
+    filas = int(chan)
+    columnas = int(chan)
+
+elif techo * chan >= cantas_series:
+    filas = int(chan)
+    columnas = int(techo)
+
+else:
+    filas = int(techo)
+    columnas = int(techo)
+
 lenzos = ventana.subplots(
-    nrows = 4,
-    ncols = 3,
+    nrows = filas,
+    ncols = columnas,
     sharex = True,
     sharey = True
 )
 
-for i in range(len(datos)):
+for i in range(filas * columnas):
 
-    # i//3 = 0 0 0 1 1 1 2 2 2 3 3 3
-    # i%3  = 0 1 2 0 1 2 0 1 2 0 1 2
-    lenzo = lenzos[i // 3, i % 3]
+    if i+1 <= cantas_series:
 
-    # Ollo, debemos usar volumes molares!! (eu con esto descubrín o que era un
-    # 'problema de 3 días' en programación XD) 
-    lenzo.plot(
-        datos[i][0]/moles[0],
-        datos[i][1],
-        color = "red",
-        marker = '.'
-    )
+        lenzo = lenzos[i // columnas, i % columnas]
 
-    # para as rectas, necesitamos valores x. Fago o mesmo que nas gráficas anteriores
-    coord_x_curvas = np.linspace(
-        min(datos[i][0] / moles[0]),
-        max(datos[i][0] / moles[0]),
-        num = 1000
-    )
+        # Ollo, debemos usar volumes molares!! (eu con esto descubrín o que era
+        # un 'problema de 3 días' en programación XD) 
+        lenzo.plot(
+            datos[i][0]/moles[0],
+            datos[i][1],
+            color = "red",
+            marker = '.'
+        )
 
-    # recórdese que nas gráficas anteriores representábamos axustes lineales,
-    # collendo os datos x e multiplicándoos pola pendente etc. Neste caso hai
-    # que aplicarlle a funcion de Van der Waals. Está documentada no arquivo
-    # 'analise.py'
-    coord_y_curvas = xerador_van_der_waals(temperaturas[i])(
-        coord_x_curvas, 
-        parametros[i][0],
-        parametros[i][1]
-    )
+        # para as rectas, necesitamos valores x. Fago o mesmo que nas gráficas
+        # anteriores
+        coord_x_curvas = np.linspace(
+            min(datos[i][0] / moles[0]),
+            max(datos[i][0] / moles[0]),
+            num = 1000
+        )
 
-    # e graficamos os puntos x e y da curva
-    lenzo.plot(
-        coord_x_curvas,
-        coord_y_curvas,
-        color = "gray",
-        marker = '',
-        linestyle = '-'
-    )
+        # recórdese que nas gráficas anteriores representábamos axustes
+        # lineales, collendo os datos x e multiplicándoos pola pendente etc.
+        # Neste caso hai que aplicarlle a funcion de Van der Waals. Está
+        # documentada no arquivo 'principal.py'
+        coord_y_curvas = xerador_van_der_waals(temperaturas[i])(
+            coord_x_curvas, 
+            parametros[i][0],
+            parametros[i][1]
+        )
 
-    lenzo.set(title=f"{temperaturas[i]} K")
-    if i%3 == 0:
-        lenzo.set(ylabel = r"Presión, Pa")
-    if i//3 == 3:
-        lenzo.set(xlabel = "Volume m$^3$/mol")
+        # e graficamos os puntos x e y da curva
+        lenzo.plot(
+            coord_x_curvas,
+            coord_y_curvas,
+            color = "gray",
+            marker = '',
+            linestyle = '-'
+        )
+
+        lenzo.set(title=f"{temperaturas[i]} K")
+        if i % columnas == 0: # Columna 0
+            lenzo.set(ylabel = r"Presión, Pa")
+
+        if i // columnas == filas - 1: # ultima fila
+            lenzo.set(xlabel = "Volume m$^3$/mol")
+
+    elif i+1 > cantas_series:
+        lenzos[i // columnas, i % columnas].remove()
 
 plt.show()

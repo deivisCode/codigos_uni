@@ -1,0 +1,2 @@
+0.01e6 # incerteza presions ao entrar na campana
+

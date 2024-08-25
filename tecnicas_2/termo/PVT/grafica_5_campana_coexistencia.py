@@ -1,25 +1,29 @@
+import os
+import pathlib
 
 import numpy as np
 import matplotlib.pyplot as plt
 
+import funcions
 
-# estos son  os datos orixinais outra vez, nada novo por aquí
-datos = [
-    np.loadtxt(r"resultados\serie_1_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_2_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_3_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_4_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_5_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_6_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_7_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_8_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_9_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_10_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_11_volumen_presion.txt"),
-    np.loadtxt(r"resultados\serie_12_volumen_presion.txt"),
-]
+# Esto é identico ás graficas anteriores
+DIRETORIO_PRINCIPAL = str(pathlib.Path(__file__).parent.resolve())
 
-temperaturas = np.loadtxt(r"datos\temperaturas.numpydata")
+nomes_ficheiros = os.listdir(
+    DIRETORIO_PRINCIPAL + "\\resultados\\volumes_presions_SI\\"
+)
+datos = []
+for nome in nomes_ficheiros:
+    datos.append(
+        np.loadtxt(
+            DIRETORIO_PRINCIPAL + "\\resultados\\volumes_presions_SI\\" + nome,
+            unpack=True,  # os datos están por filas
+            dtype=np.float64,
+        )
+    )
+cantas_series = len(datos)
+
+temperaturas = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\temperaturas.txt")
 
 # O complicado do asunto son os valores de entrada e de salida. O que se pode
 # facer é graficalos todos (programa grafica_1_**.py), e na propia gráfica ir
@@ -30,20 +34,20 @@ temperaturas = np.loadtxt(r"datos\temperaturas.numpydata")
 # ter separados os datos de cada lado, porque para outra parte fan falta os
 # puntos medios de ambos
 campana_entrada = np.loadtxt(
-    r"datos\campana_entrada.numpydata",
+    DIRETORIO_PRINCIPAL + "\\datos\\campana_entrada.txt",
     unpack = True, # esto porque os tomei por filas
     delimiter = ','
 )
-v_campana_entrada = campana_entrada[0] / (10 ** 6) # hai que pasalo ao SI
-p_campana_entrada = campana_entrada[1] * (10 ** 5)
+v_campana_entrada = funcions.ml_a_m3(campana_entrada[0])
+p_campana_entrada = funcions.bar_a_pascal(campana_entrada[1])
 
 campana_salida = np.loadtxt(
-    r"datos\campana_salida.numpydata",
+    DIRETORIO_PRINCIPAL + "\\datos\\campana_salida.txt",
     unpack = True,
     delimiter = ','
 )
-v_campana_salida = campana_salida[0] / (10 ** 6)
-p_campana_salida = campana_salida[1] * (10 ** 5)
+v_campana_salida = funcions.ml_a_m3(campana_salida[0])
+p_campana_salida = funcions.bar_a_pascal(campana_salida[1])
 
 
 ventana = plt.figure( num="Zona de coexistencia" )

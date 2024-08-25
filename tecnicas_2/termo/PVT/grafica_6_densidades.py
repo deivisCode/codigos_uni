@@ -1,24 +1,32 @@
+import pathlib
+
 import numpy as np
 import matplotlib.pyplot as plt
-from analise import pol_cuadrado
+from funcions import pol_cuadrado
 
-densidades_entrada = np.loadtxt(r"resultados\densidades_entrada.txt")
-densidades_salida = np.loadtxt(r"resultados\densidades_salida.txt")
-densidades_coeficientes = np.loadtxt(r"resultados\densidades_coeficientes.txt")
-densidades_regresion = np.loadtxt(r"resultados\densidades_regresion.txt")
-suma_densidades = np.loadtxt(r"resultados\densidades_suma.txt")
-temperaturas = np.loadtxt(r"datos\temperaturas.numpydata")
+# o de cargar os datos é o mesmo de sempre
+DIRETORIO_PRINCIPAL = str(pathlib.Path(__file__).parent.resolve())
+
+densidades_entrada = np.loadtxt(DIRETORIO_PRINCIPAL + "\\resultados\\densidades_entrada.txt")
+densidades_salida = np.loadtxt(DIRETORIO_PRINCIPAL + "\\resultados\\densidades_salida.txt")
+densidades_coeficientes = np.loadtxt(DIRETORIO_PRINCIPAL + "\\resultados\\densidades_coeficientes.txt")
+densidades_regresion = np.loadtxt(DIRETORIO_PRINCIPAL + "\\resultados\\densidades_regresion.txt")
+densidades_mitad  = np.loadtxt(DIRETORIO_PRINCIPAL + "\\resultados\\densidades_mitad.txt")
+
+temperaturas  = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\temperaturas.txt")
+temperatura_critica  = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\temperatura_critica.txt")
+
 
 ventana_densidades = plt.figure("densidades",figsize=(6,6),dpi=150)
-
 lenzo  = ventana_densidades.add_subplot(1,1,1)
 
 lenzo.set_ylabel("Temperaturas K", fontsize = 11)
 lenzo.set_xlabel(r"$\rho\ \frac{kg}{m^3}$", fontsize = 11)
 
+# estos son os os puntos da zona de entrada
 lenzo.errorbar(
     densidades_entrada[0],
-    temperaturas[temperaturas<304.55],
+    temperaturas[temperaturas<=temperatura_critica],
     xerr            = densidades_entrada[1],
     linestyle       = '',
     marker          = 'o',
@@ -28,9 +36,11 @@ lenzo.errorbar(
     capsize         = 2,
     label = "Densidades zona da entrada"
 )
+
+# estos son os os puntos da zona de salida
 lenzo.errorbar(
     densidades_salida[0],
-    temperaturas[temperaturas<304.55],
+    temperaturas[temperaturas<=temperatura_critica],
     xerr            = densidades_salida[1],
     linestyle       = '',
     marker          = 'o',
@@ -38,14 +48,14 @@ lenzo.errorbar(
     color           = "blue",
     ecolor          = "gray",
     capsize         = 2,
-    label = "Densidades zona da entrada"
+    label = "Densidades zona da salida"
 )
 
-
+# os puntos medios
 lenzo.errorbar(
-    suma_densidades[0],
+    densidades_mitad[0],
     temperaturas[temperaturas<304.55],
-    xerr            = suma_densidades[1],
+    xerr            = densidades_mitad[1],
     linestyle       = '',
     marker          = 'd',
     markeredgecolor = "black",
@@ -55,12 +65,14 @@ lenzo.errorbar(
     label = "Densidades medias"
 )
 
+# puntos x para calcular o noso polinomio
 x_densidades_polinomio = np.linspace(
     min(densidades_entrada[0]),
     max(densidades_salida[0]),
     num=100
 )
 
+# os puntos y correspondentes
 y_densidades_polinomio = pol_cuadrado(
     x_densidades_polinomio,
     densidades_coeficientes[0],
@@ -76,12 +88,14 @@ lenzo.plot(
     label="Axuste Cuadrático",
 )
 
+# puntos x para a regresion lineal dos puntos medios
 x_densidades_regresion = np.linspace(
-    suma_densidades[0][0],
-    suma_densidades[0][-1],
+    densidades_mitad[0][0],
+    densidades_mitad[0][-1],
     num=100
-)[10:-40]
+)[10:-40] # OLLO, ESTO DE AQUí IGUAL HAI QUE AXUSTALO
 
+# puntos y correspondentes
 y_densidades_regresion = (
     x_densidades_regresion - densidades_regresion[1]
 ) / densidades_regresion[0]
