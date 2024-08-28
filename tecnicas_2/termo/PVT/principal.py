@@ -13,62 +13,16 @@ import funcions
 #
 # O arquivo este está feito para que se lle poidan cambiar os datos facilmente.
 # Os datos 'crudos' atópanse todos no directorio '.\datos'
-
-# Estructura do directorio de datos:
 #
-# volumes_presions\
-#      t_10.txt
-#      t_12_3.txt
-#        ...
-#      t_32_5.txt
-#      t_35.txt
-# incerteza_presion.txt
-# incerteza_volumen.txt
-# R.txt
-# temperatura_critica.txt
-# temperaturas.txt
-# campana_entrada.txt
-# campana_incerteza_v_entrada.txt
-# campana_incerteza_v_salida.txt
-# campana_salida.txt
-# limite_ideal.txt
-# masa_molar_etano.txt
-
-# no sub-directorio 'volumes_presions\' atópanse arrays de datos tomados por
-# filas (para seguir o estandar de TidyData). A primeira columna corresponde ao
-# volumen e a segunda as presións, en mL e bar respectivamente. Cada arquivo
-# corresponde a unha serie de datos, ousexa a unha temperatura diferente. Para
-# usar os datos que se tomen no lab, solo hai que reemplazar estos datos
-
-# incerteza_presion|volumen.txt  ->  é facil de explicar. Cada ficheiro ten 1
-# so numero que é a incerteza que considerei para V e P. Eu supuxen ambas
-# constantes, asique para facelo doutro modo habería que cambiar medio programa
-# :_(
-
-# R.txt  ->  é a constante dos gases. Preferin metela ahí inda que tal vez non
-# sexa o mellor sitio
-
-# campana_entrada|salida.txt  ->  son os datos da zona de coexistencia, os
-# valores de volumen e presion gardados por columnas. Gardei por separado os
-# datos da zona e de entrada e de salida porque me deu así a venada
-
-# temperaturas.txt  ->  son os datos por filas das temperaturas en KELVIN
-
-# temperatura_critica.txt  ->  é o valor crítico que consideramos no lab, moi
-# necesario
-
-# limite_ideal.txt  ->  é o valor do volumen por debaixo do cal deixamos de
-# considerar que o comportamento do gas é ideal
-
-# masa_molar_etano.txt  ->  a masa molar do etano :)
-
+# Intentei comentalo todo o máximo posible, pero evidentemente de cara ao final
+# fun cansándome
 
 # RUTAS E DIRETORIOS =========================================================
 
-# por si acaso, primeiro consigo as rutas absolutas deste ficheiro, o que logo
+# Por si acaso, primeiro consigo as rutas absolutas deste ficheiro, o que logo
 # me permitirá cargar ou gardar cousas en sub-directorios de forma segura. Esto
-# é porque rutas como '.datos\...' cambian dependendo do sitio desde o que se
-# executa python
+# é porque rutas relativas como '.datos\...' cambian dependendo do sitio desde
+# o que se executa python
 
 # Este é o directorio onde ta o ficheiro principal, en ruta absoluta. Logo po
 # resto poderemos facer cousas como DIRETORIO_PRINCIPAL +
@@ -81,14 +35,13 @@ DIRETORIO_PRINCIPAL = str(pathlib.Path(__file__).parent.resolve())
 temperaturas = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\temperaturas.txt")
 
 # e a temperatura crítica
-temperatura_critica = np.loadtxt(
-    DIRETORIO_PRINCIPAL + "\\datos\\temperatura_critica.txt"
-)
+temperatura_critica = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\temperatura_critica.txt")
 
-# necesitamos todos os datos de V e P. Dependendo da cantidade de series de
+# Necesitamos todos os datos de V e P. Dependendo da cantidade de series de
 # datos que teñamos, teremos máis ou menos ficheiros, asique primeiro
 # listámolos todos
 nomes_ficheiros = os.listdir(DIRETORIO_PRINCIPAL + "\\datos\\volumes_presions\\")
+
 # Meto todas as series nunha lista, así logo poderemos iterar por ela pa facer
 # cousas, en vez de escribir as cousas 12 veces (hai 12 series no meu caso)
 series = []
@@ -97,8 +50,8 @@ for nome in nomes_ficheiros:
         np.loadtxt(
             DIRETORIO_PRINCIPAL + "\\datos\\volumes_presions\\" + nome,
             dtype     = np.float64,
-            unpack    = True,
-            delimiter = ",",
+            unpack    = True, # os datos están por columnas
+            delimiter = ",", # separados por comas
         )
     )
 
@@ -107,13 +60,13 @@ for nome in nomes_ficheiros:
 # Este é o numero de series de datos que tomamos no laboratorio, no meu caso 12
 cantas_series = len(series)
 
-# unha pequena comprobación, por si acaso
+# unha pequena comprobación, por si acaso. Resulta ser un erro tipico (polo
+# menos para min)
 if cantas_series != len(temperaturas):
     print("Comproba a cantidade de datos de V, P e T")
     sys.exit()
 else:
     print(f"Hai {cantas_series} series de cada cousa, parece que a cantidade de datos é correcta")
-
 
 # as incertezas dos volumes e presions. Consideradas CONSTANTES
 incerteza_v = funcions.ml_a_m3(
@@ -126,23 +79,25 @@ incerteza_p = funcions.bar_a_pascal(
 # E o valor de R
 R = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\R.txt")
 
-# Por desgracia todos estos datos de P e V están nun sistema de unidades
-# arcaico e descoñecido (bar e mL) asique hai que pasalos ao SI. Uso unha das
-# funcións que están no arquivo aparte
+# Xa están todos os datos cargados. Por desgracia todos estos datos de P e V
+# están nun sistema de unidades arcaico e descoñecido (bar e mL) asique hai que
+# pasalos ao SI. Uso unha das funcións que están no arquivo aparte
 for i in range(cantas_series):
     series[i][0] = funcions.ml_a_m3(series[i][0])      # Volumes. mL -> m^3
     series[i][1] = funcions.bar_a_pascal(series[i][1]) # Presions. bar -> Pa
 
-# Borro os contidos do directorio onde logo gardarei os datos de V e P. Esto
-# faise porque no meu caso teño 12 series, pero se tu tes 11 enton reescribirás
-# solo 11 (e quedará 1 solta). Eso pode dar problemas. Ollo, usar o paquete
-# 'os' a veces tamén da problemas
+# Agora que temos os datos nunhas unidades correctas, gardámolos para poder
+# usar cando queiramos dende calquer outro programas. Primeiro borro os contidos do
+# directorio onde logo gardarei os datos de V e P. Esto faise porque no meu
+# caso teño 12 series, pero se tu tes 11 enton reescribirás solo 11 (e quedará
+# 1 solta). Eso pode dar problemas. Ollo, usar o paquete 'os' a veces tamén da
+# problemas
 ficheiros_preexistentes = os.listdir(
     DIRETORIO_PRINCIPAL + "\\resultados\\volumes_presions_SI"
 )
 if len(ficheiros_preexistentes) != 0:
     for ficheiro in ficheiros_preexistentes:
-        os.remove(
+        os.remove( # Estiven tentado a poñer C:\Windows\System32
             DIRETORIO_PRINCIPAL + "\\resultados\\volumes_presions_SI\\" + ficheiro
         )
 
@@ -165,9 +120,7 @@ for i in range(cantas_series):
 # Hai que coller os datos da zona de baixa presion. Esto é algo feito a ollo,
 # asique é recomendable facer algunha mini gráfica antes para elixilos ben. No
 # meu caso, collin os datos onde os volumes eran maiores de 0.0000032 m^3
-limite_ideal = funcions.ml_a_m3(
-    np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\limite_ideal.txt")
-)
+limite_ideal = funcions.ml_a_m3( np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\limite_ideal.txt") )
 
 # Un problema que aparece aquí é que cada serie pode ter un número diferentes
 # de valores por encima do limite. Nunha serie poden ser 13, noutra 16. Esto da
@@ -184,14 +137,15 @@ limite_ideal = funcions.ml_a_m3(
 # seleccionar elementos dun array que cumplen certa condición, facendo
 # meu_array[ expresion ] que será un array creado a partir de 'meu_array' pero
 # collendo solo os elemento nas mesmas posicións que os valores True da
-# expresión. No noso caso, serie[0][0][ serie[0][0] > limite_ideal ], serán os
-# valores de serie[0][0] que cumplen que son maiores que o limite ideal antes
-# mencionado.
+# expresión. No noso caso, series[0][0][ series[0][0] > limite_ideal ], serán
+# os valores de serie[0][0] que cumplen que son maiores que o limite ideal
+# antes mencionado. Evidentemente, serie[0][0] é a primeira serie, e a súa
+# primeira columna
 cantos_elementos_ideales = len(series[0][0][ series[0][0] > limite_ideal])
 
 # Con este número creo un obxeto de tipo 'slice' para logo poder seleccionar
 # facilmente os elementos necesarios sen necesidad de estar escribindo
-# constantemente cousas como [1:15:]. Importante recordar a orde dos arrays de
+# constantemente cousas como [1:15:1]. Importante recordar a orde dos arrays de
 # datos orixinais, primeiro empecei a tomar datos cando V era grande, e logo
 # iba diminuindo. Entón, será necesario sacar os datos do COMEZO dos arrays.
 corte_ideal = slice(cantos_elementos_ideales)
@@ -200,7 +154,7 @@ corte_ideal = slice(cantos_elementos_ideales)
 # cousas ahí
 series_zona_ideal = []
 for serie in series:
-    # unha lista tempora onde meterei os dous arrays de V e P limitados
+    # unha lista temporal onde meterei os dous arrays de V e P limitados
     temp = []
     # Unhas aclaracións. 'serie' evidentemente corresponde a cada serie de
     # datos, cada unha composta por dous arrays, V e P, polo que serie[0] é o
@@ -210,13 +164,15 @@ for serie in series:
     temp.append(serie[0][corte_ideal])
     temp.append(serie[1][corte_ideal])
 
+    # O de usar fliplr aquí é un punto clave, pero o día que o escribin non o
+    # comentei e olvideime de pa qué era
     series_zona_ideal.append(np.fliplr(np.array(temp)))
 
-# Igual que antes, para evitar problemas vacío o directorio onde logo gardarei
-# os datos
-ficheiros_preexistentes = os.listdir(
-    DIRETORIO_PRINCIPAL + "\\resultados\\volumes_presions_SI_ideales"
-)
+# Agora gardamos estos datos. Van ser necesarios para representar as regresións
+# dos moles e as do virial. Igual que antes, para evitar problemas vacío o
+# directorio onde logo gardarei os datos
+ficheiros_preexistentes = os.listdir(DIRETORIO_PRINCIPAL + "\\resultados\\volumes_presions_SI_ideales")
+
 if len(ficheiros_preexistentes) != 0:
     for ficheiro in ficheiros_preexistentes:
         os.remove(
@@ -225,7 +181,6 @@ if len(ficheiros_preexistentes) != 0:
             + ficheiro
         )
 
-# Tamén o gardo en ficheiros aparte
 for i in range(cantas_series):
     np.savetxt(
         DIRETORIO_PRINCIPAL
@@ -264,11 +219,12 @@ for temperatura, serie in zip(temperaturas,series_zona_ideal): # amo usar 'zip'
         )
     )
 
-# Convirto esto nun array porque será máis cómodo
+# Convirto esto nun array porque será máis cómodo. E logo gárdoo
 regresions_moles = np.array(regresions_moles)
 np.savetxt(DIRETORIO_PRINCIPAL + "\\resultados\\moles_regresions.txt", regresions_moles)
 
-# O noso array de regresions debería verse algo tal que así:
+# O noso array de regresions debería verse algo tal que así (ou con datos
+# diferentes)
 #
 # [[ 1.1084800e+05  4.3521004e+04  2.0561218e-03  6.7119261e-05]
 #  [ 4.8096000e+04  4.3520586e+04  2.2250414e-03  6.6577806e-05]
@@ -286,7 +242,8 @@ np.savetxt(DIRETORIO_PRINCIPAL + "\\resultados\\moles_regresions.txt", regresion
 # onde a terceira columna son as pendentes (moles)
 
 # Para a media, calcúloa normalmente. Para a incerteza, como non sei
-# estadística, sácolle a varianza directamente
+# estadística, sácolle a varianza directamente. Recordar que a terceira
+# columna, ousexa [:,2] son os moles
 media_moles = np.mean(regresions_moles[:,2])
 incerteza_media_moles = np.std(regresions_moles[:,2]) ** 2
 
@@ -301,7 +258,7 @@ np.savetxt(
 masa_molar_etano = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\masa_molar_etano.txt")
 masa_etano = masa_molar_etano * media_moles
 
-# e volvo gardar os datos. Aquí uso 'atleast_1d' porque o dato que quero gardar
+# E volvo gardar os datos. Aquí uso 'atleast_1d' porque o dato que quero gardar
 # é un array 0-dimensional (un dato solo) e deste xeito pasa a ser un array dun
 # elemento (lioso, pero qué lle imos facer)
 np.savetxt(
@@ -309,13 +266,13 @@ np.savetxt(
     np.atleast_1d(masa_molar_etano),
 )
 
-# CALCULO DAS COUSAS DO VIRIAL ===============================================
+# CÁLCULO DAS COUSAS DO VIRIAL ===============================================
 
 # Cálculo dos coeficientes esos do virial. Ollo aquí usamos volumes molares
 # (m^3/mol). Imos calcular unhas regresións lineales, unha por cada serie de
 # datos (12 no meu caso). Estas regresións fanse usando solo os datos da zona
-# 'ideal'. O que necesitamos meter na regresion son puntos x e y, asique primeiro
-# calcúloos explicitamente segundo a fórmula
+# 'ideal' que se mencionou antes. O que necesitamos meter na regresion son
+# puntos x e y, asique primeiro calcúloos explicitamente segundo a fórmula
 #
 # Pv/RT - 1 = B / v
 #
@@ -337,7 +294,7 @@ for serie,temperatura in zip(series_zona_ideal,temperaturas):
         serie[1] * (serie[0] / media_moles) / (R * temperatura) - 1
     )
 
-    # incertezas de y
+    # incertezas de y. Calculadas por propagacion
     incertezas_virial_y.append(
         (1 / (R * temperatura))
         * np.sqrt(
@@ -365,18 +322,13 @@ virial_y = np.array(virial_y)
 incertezas_virial_y = np.array(incertezas_virial_y)
 regresions_virial = np.array(regresions_virial)
 
+# Gardo os datos pa usalos cos outros programas
+np.savetxt(DIRETORIO_PRINCIPAL + "\\resultados\\virial_puntos_x.txt"     , virial_x)
+np.savetxt(DIRETORIO_PRINCIPAL + "\\resultados\\virial_puntos_y.txt"     , virial_y)
+np.savetxt(DIRETORIO_PRINCIPAL + "\\resultados\\virial_incertezas_y.txt" , incertezas_virial_y)
+np.savetxt(DIRETORIO_PRINCIPAL + "\\resultados\\virial_regresions.txt"   , regresions_virial)
 
-# gardo os datos pa usalos cos outros programas
-np.savetxt(DIRETORIO_PRINCIPAL + "\\resultados\\virial_puntos_x.txt", virial_x)
-np.savetxt(DIRETORIO_PRINCIPAL + "\\resultados\\virial_puntos_y.txt", virial_y)
-np.savetxt(
-    DIRETORIO_PRINCIPAL + "\\resultados\\virial_incertezas_y.txt", incertezas_virial_y
-)
-np.savetxt(
-    DIRETORIO_PRINCIPAL + "\\resultados\\virial_regresions.txt", regresions_virial
-)
-
-# Os axustes deberían ser da forma
+# Os axustes (virial_regresions.txt) deberían ser da forma
 #
 # [[ 8.8224173e-02  3.0566696e-02 -1.2873765e-04  4.9967453e-05]
 #  [ 7.8329086e-02  3.0319728e-02 -5.9228390e-05  4.9563740e-05]
@@ -400,6 +352,7 @@ incertezas_coef_B_virial = regresions_virial[:,3]
 media_B = np.mean(coef_B_virial)
 incerteza_media_B = np.std(coef_B_virial) ** 2
 
+# E gardo o numeriño
 np.savetxt(
     DIRETORIO_PRINCIPAL + "\\resultados\\virial_coeficiente_B.txt",
     np.vstack((media_B, incerteza_media_B)),
@@ -432,8 +385,11 @@ for serie,temperatura in zip(series,temperaturas): # sigo amando usar 'zip'
     )
 
     # [-1] porque queremos usar o ultimo que se engadiu
+    # [0] porque queremos os parámetros
     parametros_optimizados.append(axustes_vdw[-1][0])
 
+    # [-1] porque queremos usar o ultimo que se engadiu
+    # [1] porque queremos as incertezas dos parámetros
     incertezas_parametros_optimizados.append(
         np.sqrt(np.diag(axustes_vdw[-1][1]))
     )
@@ -450,7 +406,8 @@ parametro_b = parametros_optimizados[:,1]
 incerteza_parametro_a = incertezas_parametros_optimizados[:,0]
 incerteza_parametro_b = incertezas_parametros_optimizados[:,1]
 
-# calculo a media dos parámetros
+# calculo a media dos parámetros. Uso os datos por debaixo de Tc porque por
+# enriba os axustes tolean
 media_a = np.mean(parametro_a[temperaturas < temperatura_critica])
 media_b = np.mean(parametro_b[temperaturas < temperatura_critica])
 
@@ -485,6 +442,8 @@ np.savetxt(
 #  [ 3.14474474e-01 -2.93604925e-08  2.11296134e+00  8.29918624e-04]
 #  [ 3.03528812e-01  8.31609329e-09  1.32958716e+00  5.31555711e-04]
 #  [ 2.64412643e-01 -3.19707305e-09  5.05079647e-01  2.01928174e-04]]
+#
+# Firxarse como as últimas 3 filas son mais diferentes (están por riba da Tc)
 
 
 # ZONA DE COEXISTENCIA =======================================================
@@ -512,28 +471,19 @@ cantos_datos_entrada = len(v_campana_salida)
 corte_campana = slice(cantos_datos_entrada)
 
 # Estas son as temperaturas (truncadas) que imos usar
-np.savetxt(
-    DIRETORIO_PRINCIPAL + "\\resultados\\campana_temperaturas.txt",
-    temperaturas[corte_campana],
-)
+np.savetxt( DIRETORIO_PRINCIPAL + "\\resultados\\campana_temperaturas.txt", temperaturas[corte_campana])
 
 # Tamén cargo as incertezas do volumen e presion. Os da presion na salida non
 # os necesito
-incerteza_v_campana_entrada = np.loadtxt(
-    DIRETORIO_PRINCIPAL + "\\datos\\campana_incerteza_v_entrada.txt"
-)
-incerteza_v_campana_salida = np.loadtxt(
-    DIRETORIO_PRINCIPAL + "\\datos\\campana_incerteza_v_salida.txt"
-)
-incerteza_p_campana_entrada = np.loadtxt(
-    DIRETORIO_PRINCIPAL + "\\datos\\campana_incerteza_p_entrada.txt"
-)
+incerteza_v_campana_entrada = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\campana_incerteza_v_entrada.txt")
+incerteza_v_campana_salida  = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\campana_incerteza_v_salida.txt")
+incerteza_p_campana_entrada = np.loadtxt(DIRETORIO_PRINCIPAL + "\\datos\\campana_incerteza_p_entrada.txt")
 
 # Necesitamos as densidades e súas incertezas
 densidades_entrada = masa_etano / v_campana_entrada
 incerteza_densidades_entrada = np.sqrt(
     masa_etano * incerteza_v_campana_entrada / (v_campana_entrada ** 2)
-)
+) # por propagación
 
 densidades_salida = masa_etano / v_campana_salida
 incerteza_densidades_salida = np.sqrt(
@@ -578,6 +528,7 @@ incerteza_ordenada_densidades = regresion_densidades[1]
 pendente_densidades = regresion_densidades[2]
 incerteza_pendente_densidades = regresion_densidades[3]
 
+# gardo os datos estackeados verticalmente
 np.savetxt(
     DIRETORIO_PRINCIPAL + "\\resultados\\densidades_regresion.txt",
     np.vstack((pendente_densidades, ordenada_densidades)),
@@ -591,7 +542,7 @@ incerteza_densidades_totales = np.concatenate(
     (incerteza_densidades_entrada, np.flip(incerteza_densidades_salida))
 )
 
-# Non me preguntedes que fixen aquí. Funciona e ala
+# Non me preguntedes que fixen aquí. Funciona e ala :_)
 temperaturas_totales = np.concatenate(
     (
         temperaturas[temperaturas <= temperatura_critica],
@@ -614,6 +565,7 @@ densidade_a = axuste_densidades[0][0]
 densidade_b = axuste_densidades[0][1]
 densidade_c = axuste_densidades[0][2]
 
+# Gardo solamente os coeficientes e non suas incertezas. Dame pereza
 np.savetxt(
     DIRETORIO_PRINCIPAL + "\\resultados\\densidades_coeficientes.txt",
     np.vstack((densidade_a, densidade_b, densidade_c)),
@@ -621,7 +573,7 @@ np.savetxt(
 
 # FINALMENTE clapeyron e calor de vaporizacion
 
-# calculo todo na zona de coexistencia da entrada da campana, por ter mellores datos.
+# calculo todo na zona de coexistencia da ENTRADA da campana, por ter mellores datos.
 # Importante como collo solamente parte dos datos de temperaturas
 axuste_clapeyron = funcions.regresion(
     temperaturas[corte_campana],
@@ -639,7 +591,8 @@ np.savetxt(
     np.vstack((pendente_clapeyron, ordenada_clapeyron)),
 )
 
-delta_v = v_campana_entrada - v_campana_salida 
+# Esto era aplicar as formulillas
+delta_v = v_campana_entrada - v_campana_salida
 calores = pendente_clapeyron * temperaturas[corte_campana] * delta_v
 incerteza_calores = np.sqrt(
     (temperaturas[corte_campana] * delta_v * incerteza_pendente_clapeyron) ** 2
