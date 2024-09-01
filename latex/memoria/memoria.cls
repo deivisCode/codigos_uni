@@ -6,7 +6,7 @@
 
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{memoria}[2024/08/29 Clase das memorias de Deivis]
+\ProvidesClass{memoria}[2024/09/02 Clase das memorias de Deivis]
 
 % Usar a clase article como base
 \LoadClass[12pt]{article}
@@ -65,8 +65,8 @@
 
 
 % MATES BASICAS ================================================================
-\RequirePackage{amsmath} % entornos matemáticos
-\RequirePackage{amssymb} % colección extendida de símbolos matemáticos
+\RequirePackage{mathtools} % matemáticas xerais. Inclue amsmath
+\RequirePackage{amssymb} % colección extendida de símbolos matemáticos. Inclue amsfonts
 % \RequirePackage{amsthm}  % creación de estructuras tipo teoremas, definicións, etc.
 
 % Para crear o estilo dun teorema hai que facer:
@@ -83,6 +83,12 @@
 %     }
 % \theoremstyle{estilopropio} % usar o estilo para os teoremas
 % \newtheorem*{teorema}{Teorema} % definir o entorno 'teorema'
+
+% para derivadas de todo tipoo
+\RequirePackage{diffcoeff}
+
+% Letras caligraficas moi reviradas
+\RequirePackage{mathrsfs} % letras caligráficas '\mathscr'
 
 
 % BIBLIOGRAFÍA =================================================================
@@ -112,13 +118,15 @@
     % name=Tabla%
 }
 
+
 % TABLAS =======================================================================
 \RequirePackage{multirow} % tablas con celdas unidas
 \RequirePackage{booktabs} % non e necesario pero aos nerds de Latex gustalle
 
+
 % UNIDADES =====================================================================
 % Para usar unidades e numeros de forma corrrecta e estándar con \num{},
-% \unit{}, \qty{}, etc.
+% \unit{}, \qty{}, etc. (coidado, siunitx v.3 \qty conflite con physics \qty)
 \RequirePackage{siunitx}
 \sisetup{
     output-decimal-marker={.},
@@ -140,11 +148,19 @@
 }
 
 
-
 % CORES ========================================================================
 % 'xcolor' pa definir cores e toda a vaina. Opción 'table' pa poder colorear
 % celdas usando \cellcolor
 \RequirePackage[table]{xcolor}
+
+% ENCABEZADO/PE DE PAXINA =====================================================
+% \RequirePackage{fancyhdr} % pa facilitar a creacion cun par de comandos
+% \fancyhead[L]{encabezado na esquerda}
+% \fancyhead[R]{encabezado na dereita}
+% \fancyfoot[L]{pe de paxina esquerda}
+
+% para que o texto ao pe de paxina non esté indentado (quitarlle sangrías)
+% \RequirePackage[hang,flushmargin]{footmisc}
 
 
 % OLVIDONA =====================================================================
@@ -154,13 +170,22 @@
 
 % EXTRAS =======================================================================
 % Para encaixar mellor o texto (a veces fállame pero vese ben)
-% \RequirePackage{microtype}
+\RequirePackage{microtype}
 
 % Para crear un cadro con texto dentro to guapo
 % \RequirePackage{framed}
 
 % Para colocar texto de 'proba' pa ver se as cousas encaixan ben
 % \RequirePackage{lipsum} % dummy text
+
+% Cargar datos. Véxase o tuto de python_e_latex/cargar_datos
+% \RequirePackage{datatool}
+% \DTLsetseparator{,}
+% \DTLloaddb[
+%     noheader,
+%     keys={columna1,columna2}
+% ]{valores}{datos.dat}
+% \newcommand{\var}[1]{\DTLfetch{valores}{columna1}{#1}{columna2}}
 
 
 % LINKS ========================================================================
@@ -179,5 +204,3 @@
 \setlength\parindent{0pt}             % eliminar a indentación
 \setlength\parskip{0.7em}             % aumentar o tamaño do interlineado entre párrafos
 % \renewcommand*{\baselinestretch}{2.0} % interlineado global
-
-
