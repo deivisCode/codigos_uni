@@ -1,9 +1,20 @@
 import pandas as pd
 
+# Esto son uns datos de proba. Neste caso colloos dun arquivo *.csv, pero poden
+# vir doutro sitio, como dunha matriz rectangular de numpy
 datos = pd.read_csv(
     "datos.csv",
     header = 0 # qué fila usar pos nomes das columnas
 )
+
+# Os nomes das columnas serán os do arquivo .csv Podemos melloralos un pouco
+# facendo o seguinte para engadirlle as unidades correctas, nun formato que o
+# paquete de LaTeX siunitx poderá 'parsear' para deixalas deliciosas. Esto
+# facémolo usando o paquete 'siunitx' en latex
+datos.columns = [
+    datos.columns[0] + " [\\unit{\\volt}]",
+    datos.columns[1] + " [\\unit{\\ampere}]",
+] # OLLO: esta parte non era necesaria, pero queda ben bonita
 
 # esto e un cristo e a documentacion oficial tamén
 with open(r"tabla.tex",'w') as ficheiro:
@@ -22,7 +33,8 @@ with open(r"tabla.tex",'w') as ficheiro:
             position = "H", # pa que quede no sitio (necesita paquete 'float')
             label = "tab:Tabla bonita", # label e caption largo e corto
             # ollo, tildes e esas cousas téñense que escapar con \
-            caption = (r"Esta tabla foi feita nin mais nin menos que co noso querid\'isimo leitek",r"Tabla feita con latex" ),
+            caption = (r"Esta tabla foi xerada automaticamente con python",r"Tabla feita con python" ),
             hrules = True, # liñas horizontais bonicas (necesita paquete 'booktabs')
+            siunitx = True # Usar tabla estilo siunitx (necesita paquete 'siunitx')
         )
     )

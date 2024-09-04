@@ -1,11 +1,20 @@
 # CSV -> Pandas dataframe -> tabla de LaTeX
 
-Convirte datos tipo CSV a unha tabla bonita de LaTeX usando
+Convirte datos estructurados a unha tabla bonita de LaTeX usando
 [pandas](https://pandas.pydata.org/docs/reference/index.html#api)
+
+```
+┌─────────────┐
+│   datos     │
+│estructurados│  pandas   ┌─────────┐  \input  ┌─────────────┐
+│ (matrices,  │──────────►│tabla.tex├─────────►│documento.tex│
+│ *.csv, etc.)│           └─────────┘          └─────────────┘
+└─────────────┘
+```
 
 Tendo estos datos:
 ```csv
-voltaxe,intensidade
+Voltaxe,Intensidade
 1,6
 1,2
 2,3
@@ -15,11 +24,11 @@ xeramos esta tabla automáticamente:
 ```latex
 \begin{table}[H]
 \centering
-\caption{Tabla feita con Python e Pandas}
+\caption[Tabla feita con python]{Esta tabla foi xerada automaticamente con python}
 \label{tab:Tabla bonita}
-\begin{tabular}{rr}
+\begin{tabular}{SS}
 \toprule
-voltaxe & intensidade \\
+{Voltaxe [\unit{\volt}]} & {Intensidade [\unit{\ampere}]} \\
 \midrule
 1 & 6 \\
 1 & 2 \\
@@ -29,6 +38,9 @@ voltaxe & intensidade \\
 \end{tabular}
 \end{table}
 ```
+Que se ve tal que así:
+![tabla](tabla.png)
+
 ## Instalación das dependencias
 
 ### Método Recomendado
@@ -43,10 +55,3 @@ pip install -r requirements.txt
 make # para rulalo todo
 make limpar # para eliminar os arquivos xerados
 ```
-### Miña setup
-- Microsoft Windows NT 10.0.19045.0
-- Powershell 7.4.3
-- Python 3.11.3
-- [Make](https://www.gnu.org/software/make/manual/make.html) 4.4.1, instalado con [scoop](https://scoop.sh/)
-- Latexmk 4.85, instalado con MikTex
-
