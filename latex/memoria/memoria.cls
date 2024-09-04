@@ -123,6 +123,15 @@
 \RequirePackage{multirow} % tablas con celdas unidas
 \RequirePackage{booktabs} % non e necesario pero aos nerds de Latex gustalle
 
+% DATOS EXTERNOS ==============================================================
+% Cargar datos. Véxase o tuto de python_e_latex/cargar_datos
+\RequirePackage{datatool}
+\DTLsetseparator{,}
+\DTLloaddb[
+    noheader, % non temos unha primeira fila cos nomes
+    keys={nome,valor,erro,unidade} % en cambio usamos estos nomes pas columnas
+]{datos}{resultados.csv} % nome da base de datos, e nome do ficheiro
+
 
 % UNIDADES =====================================================================
 % Para usar unidades e numeros de forma corrrecta e estándar con \num{},
@@ -145,6 +154,20 @@
     % per-mode=power-positive-first, % so furrula con metodo interpretado puro
     inline-per-mode=single-symbol,
     display-per-mode=fraction,
+}
+
+% Comandos para cargar datos en LaTeX usando datatool
+\newcommand{\DTLfetchsave}[5]{%
+  \edtlgetrowforvalue{#1}{\dtlcolumnindex{#1}{#2}}{#3}%
+  \dtlgetentryfromcurrentrow{#5}{\dtlcolumnindex{#1}{#4}}%
+}
+\newcommand{\cantidade}[1]{%
+  \begingroup
+  \DTLfetchsave{datos}{nome}{#1}{valor}{\valor}%
+  \DTLfetchsave{datos}{nome}{#1}{erro}{\erro}%
+  \DTLfetchsave{datos}{nome}{#1}{unidade}{\unidade}%
+  \qty{\valor\pm\erro}{\unidade}% <-- aquí é onde se usa siunitx
+  \endgroup
 }
 
 
@@ -177,15 +200,6 @@
 
 % Para colocar texto de 'proba' pa ver se as cousas encaixan ben
 % \RequirePackage{lipsum} % dummy text
-
-% Cargar datos. Véxase o tuto de python_e_latex/cargar_datos
-% \RequirePackage{datatool}
-% \DTLsetseparator{,}
-% \DTLloaddb[
-%     noheader,
-%     keys={columna1,columna2}
-% ]{valores}{datos.dat}
-% \newcommand{\var}[1]{\DTLfetch{valores}{columna1}{#1}{columna2}}
 
 
 % LINKS ========================================================================
