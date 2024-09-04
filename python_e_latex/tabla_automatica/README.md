@@ -20,7 +20,7 @@ Voltaxe,Intensidade
 2,3
 2,4
 ```
-xeramos esta tabla automáticamente:
+xeramos esta tabla (casi) automáticamente:
 ```latex
 \begin{table}[H]
 \centering
@@ -39,6 +39,7 @@ xeramos esta tabla automáticamente:
 \end{table}
 ```
 Que se ve tal que así:
+
 ![tabla](tabla.png)
 
 ## Instalación das dependencias
