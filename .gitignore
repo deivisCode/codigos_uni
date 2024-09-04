@@ -13,3 +13,6 @@ python.err
 *.run.xml
 tex.err
 tex.err.bak
+
+# ficheiros especificos
+tecnicas_2/mecanica/
