@@ -1,0 +1,74 @@
+% Uso basico de datatool copiado de
+% https://www.youtube.com/watch?v=LufMPezEN6Y
+%
+% Uso dos comandos de datatool con siunitx feito por @egreg <3
+% https://tex.stackexchange.com/a/725698/326141
+%
+% Este é un MWE dun documento de LaTeX onde certas variables se cargan
+% automáticamente usando 'datatool' e 'siunitx'. Esto é en formato 'tutorial',
+% en realidade toda esta parafernalia téñoa escrita na miña clase de latex
+% pas memorias, e non me ocupa nada nos documentos
+
+\documentclass{article}
+
+% Este é un paquete que se pode usar para cargar datos desde arquivos externos,
+% con demasiada funcionalidade como para pararme a mencionalo todo. Véxase
+% https://www.ctan.org/pkg/datatool
+\usepackage{datatool}
+
+% Imos cargar un arquivo *.csv (separado por comas) asique o primeiro que
+% facemos é elixir qué separador teñen os datos
+\DTLsetseparator{,}
+
+% Creamos unha especie de 'base de datos' a partir dun arquivo. Se o arquivo
+% orixinal se modifica externamente, os cambios na base de datos aparecen
+% automáticamente
+\DTLloaddb[
+    noheader, % non temos unha primeira fila cos nomes
+    keys={nome,valor,erro,unidade} % en cambio usamos estos nomes pas columnas
+]{datos}{resultados.csv} % nome da base de datos, e nome do ficheiro
+
+% Este é o paquete 'principal' para manipular unidades. Ten moitísimas opcións,
+% e está máis detallado no arquivo latex\memoria\memoria.cls Tamén importante
+% repasar https://www.ctan.org/pkg/siunitx
+\usepackage{siunitx}
+
+% Esto é pa configurar minimamente siunitx
+\sisetup{
+    output-decimal-marker={.},
+    round-mode=uncertainty,
+    round-precision=2,
+    uncertainty-mode = separate,
+    inter-unit-product = \ensuremath{{}\cdot{}},
+}
+
+% Agora o quid do problema. Recordar que o ficheiro de datos ten unha forma tipo
+%
+% variable_3,88,0.9,s*kg^20
+% constante_W,90,3.2,m*kg^2
+% constante_G,59,0.2,kg/(m*s^2)
+%
+% O que nos interesa agora é un comando, o cal chamarei \cantidade, que nos
+% permita usar o dato que queiramos facendo simplemente \cantidade{variable_G},
+% o cal será equivalente a escribir \qty{59 \pm 0.2}{kg/{m*s^2}}, que é o uso
+% típico do paquete siunitx. Esto resultou ser enrevesado, e a solución deuma
+% @egreg no link do comezo:
+\newcommand{\DTLfetchsave}[5]{%
+  \edtlgetrowforvalue{#1}{\dtlcolumnindex{#1}{#2}}{#3}%
+  \dtlgetentryfromcurrentrow{#5}{\dtlcolumnindex{#1}{#4}}%
+}
+\newcommand{\cantidade}[1]{%
+  \begingroup
+  \DTLfetchsave{datos}{nome}{#1}{valor}{\valor}%
+  \DTLfetchsave{datos}{nome}{#1}{erro}{\erro}%
+  \DTLfetchsave{datos}{nome}{#1}{unidade}{\unidade}%
+  \qty{\valor\pm\erro}{\unidade}% <-- aquí é onde se usa siunitx
+  \endgroup
+}
+
+\begin{document}
+
+% Agora no documento solo hai que facer o seguinte
+Boas, o valor \cantidade{constante_G} foi calculado e importado dende python!!\\
+
+\end{document}
