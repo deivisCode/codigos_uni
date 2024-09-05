@@ -84,11 +84,17 @@
 % \theoremstyle{estilopropio} % usar o estilo para os teoremas
 % \newtheorem*{teorema}{Teorema} % definir o entorno 'teorema'
 
-% para derivadas de todo tipoo
+% para derivadas de todo tipo
 \RequirePackage{diffcoeff}
 
-% Letras caligraficas moi reviradas
-\RequirePackage{mathrsfs} % letras caligráficas '\mathscr'
+% Para integrales de todo tipo
+\RequirePackage{esint}
+
+% Letras caligraficas moi reviradas, \mathscr
+\RequirePackage{mathrsfs} 
+
+% Polinomios sinxelos. \polynomial{}, \polynomialfrac{}{}
+\RequirePackage{polynomial}
 
 
 % BIBLIOGRAFÍA =================================================================
@@ -100,9 +106,10 @@
 
 
 % FIGURAS ======================================================================
-\RequirePackage{graphicx} % pa facilitar o uso de \includegraphics
-\RequirePackage{float}    % permite a colocación 'H' dos floats
-% \RequirePackage{subfig}   % para colcar varias imaxes xuntas
+\RequirePackage{graphicx}  % pa facilitar o uso de \includegraphics
+\graphicspath{ {./imaxes/} }
+\RequirePackage{float}  % permite a colocación 'H' dos floats
+% \RequirePackage{subfig} % para colcar varias imaxes xuntas
 
 
 % CAPTIONS =====================================================================
@@ -122,6 +129,7 @@
 % TABLAS =======================================================================
 \RequirePackage{multirow} % tablas con celdas unidas
 \RequirePackage{booktabs} % non e necesario pero aos nerds de Latex gustalle
+
 
 % DATOS EXTERNOS ==============================================================
 % Cargar datos. Véxase o tuto de python_e_latex/cargar_datos
@@ -186,9 +194,18 @@
 % \RequirePackage[hang,flushmargin]{footmisc}
 
 
-% OLVIDONA =====================================================================
-% paquetes que non recordo pa que os quero
+% LISTAS =======================================================================
+% Pa configurar facilmente listas e tal. Permite opcions tipo
+% \begin{enumerate}[label=(arabic*)]
 % \RequirePackage{enumitem}
+
+% Para facelo a man, pode facerse o sequinte. Poden poñerse dentro do
+% entorno correspondente e ser locales
+\renewcommand{\labelitemi}{\arabic{itemi}} 
+\renewcommand{\labelitemii}{\arabic{itemi}.\arabic{itemii}}
+\renewcommand{\labelenumi}{\arabic{enumi}}
+\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
+\renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}}
 
 
 % EXTRAS =======================================================================
@@ -212,9 +229,11 @@
     urlcolor={blue!80!black}    %
 }
 
-% FORMATEADO ===================================================================
+
+% FORMATEADO XERAL =============================================================
 
 % Usa un interlineado maior para separar párrafos en vez de usar sangría
-\setlength\parindent{0pt}             % eliminar a indentación
-\setlength\parskip{0.7em}             % aumentar o tamaño do interlineado entre párrafos
+\setlength\parindent{0pt}  % eliminar a indentación
+\setlength\parskip{0.7em}  % aumentar o tamaño do interlineado entre párrafos
+
 % \renewcommand*{\baselinestretch}{2.0} % interlineado global
