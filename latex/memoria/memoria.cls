@@ -39,7 +39,7 @@
 % marxes do corpo -----------------------------------------------
     top            = 20mm,  % marxe superior
     left           = 20mm,  % marxe esquerdo
-    right          = 30mm,  % marxe dereito
+    right          = 20mm,  % marxe dereito
     bottom         = 20mm,  % marxe inferior
 % notas ao marxe ------------------------------------------------
     marginparsep   = 6mm,     % separacion co corpo
@@ -109,7 +109,7 @@
 \RequirePackage{graphicx}  % pa facilitar o uso de \includegraphics
 \graphicspath{ {./imaxes/} }
 \RequirePackage{float}  % permite a colocación 'H' dos floats
-% \RequirePackage{subfig} % para colcar varias imaxes xuntas
+% \RequirePackage{subfig} % para colcar varias imaxes xuntas, ou subcaption
 
 
 % CAPTIONS =====================================================================
@@ -133,12 +133,12 @@
 
 % DATOS EXTERNOS ==============================================================
 % Cargar datos. Véxase o tuto de python_e_latex/cargar_datos
-\RequirePackage{datatool}
-\DTLsetseparator{,}
-\DTLloaddb[
-    noheader, % non temos unha primeira fila cos nomes
-    keys={nome,valor,erro,unidade} % en cambio usamos estos nomes pas columnas
-]{datos}{resultados.csv} % nome da base de datos, e nome do ficheiro
+% \RequirePackage{datatool}
+% \DTLsetseparator{,}
+% \DTLloaddb[
+%     noheader, % non temos unha primeira fila cos nomes
+%     keys={nome,valor,erro,unidade} % en cambio usamos estos nomes pas columnas
+% ]{datos}{resultados.csv} % nome da base de datos, e nome do ficheiro
 
 
 % UNIDADES =====================================================================
@@ -149,7 +149,7 @@
     output-decimal-marker={.},
     % exponentes ------------------------
     exponent-mode=threshold,
-    exponent-thresholds=-3:2, % non usar exponentes 10^{-2,-1, 0, 1}
+    exponent-thresholds=-3:2, % non usar certos exponentes
     % redondear -------------------------
     % round-mode=figures, % cifras sig
     % round-mode=places, % cantos decimales
@@ -160,8 +160,12 @@
     % unidades --------------------------
     inter-unit-product = \ensuremath{{}\cdot{}}, % separacion entre unidades
     % per-mode=power-positive-first, % so furrula con metodo interpretado puro
+    per-mode=symbol, % so furrula con metodo interpretado puro
     inline-per-mode=single-symbol,
-    display-per-mode=fraction,
+    % display-per-mode=fraction,
+    list-separator={, },
+    list-final-separator={ e },
+    list-pair-separator={ e }
 }
 
 % Comandos para cargar datos en LaTeX usando datatool
@@ -184,7 +188,7 @@
 % celdas usando \cellcolor
 \RequirePackage[table]{xcolor}
 
-% ENCABEZADO/PE DE PAXINA =====================================================
+% ENCABEZADO/PE DE PAXINA ======================================================
 % \RequirePackage{fancyhdr} % pa facilitar a creacion cun par de comandos
 % \fancyhead[L]{encabezado na esquerda}
 % \fancyhead[R]{encabezado na dereita}
@@ -206,6 +210,7 @@
 \renewcommand{\labelenumi}{\arabic{enumi}}
 \renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
 \renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}}
+\renewcommand{\labelenumiv}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.\arabic{enumiv}}
 
 
 % EXTRAS =======================================================================
@@ -237,3 +242,15 @@
 \setlength\parskip{0.7em}  % aumentar o tamaño do interlineado entre párrafos
 
 % \renewcommand*{\baselinestretch}{2.0} % interlineado global
+
+% para os conteos
+% \numberwithin{equation}{section}
+% \numberwithin{table}{section}
+% \numberwithin{figure}{section}
+
+% non me acordo que facia
+% \clubpenalty=10000
+% \widowpenalty=10000
+
+% COMANDOS ÚTILES ==============================================================
+\providecommand{\abs}[1]{\lvert#1\rvert} % para o valor absoluto
