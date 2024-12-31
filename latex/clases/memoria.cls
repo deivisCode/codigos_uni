@@ -63,35 +63,59 @@
     % pass        % desactivar todo excepto showframe
 ]{geometry}
 
+% FORMAS E TAL =================================================================
+
+% Para crear un cadro con texto dentro to guapo
+% \RequirePackage{framed}
+
+% Pa definir cores e toda a vaina. 
+\RequirePackage{xcolor}
+% Opción 'table' pa poder colorear celdas usando \cellcolor          
+
 
 % MATES BASICAS ================================================================
-\RequirePackage{mathtools} % matemáticas xerais. Inclue amsmath
-\RequirePackage{amssymb} % colección extendida de símbolos matemáticos. Inclue amsfonts
-% \RequirePackage{amsthm}  % creación de estructuras tipo teoremas, definicións, etc.
 
-% Para crear o estilo dun teorema hai que facer:
-% \newtheoremstyle{estilopropio}
-%     {}{}  % espazo encima/abaixo
-%     {}    % tipo de letra do corpo
-%     {}    % indentación
-%     {}    % tipo de letra do encabezado
-%     {:}   % signo de puntuacion logo do encabezado
-%     {1em} % espaciado logo do encabezado
-%     {%      estructura do encabezado
-%         \textbf{\underline{\thmname{#1}}}%
-%         \textit{\thmnote{ (#3)}}%
-%     }
-% \theoremstyle{estilopropio} % usar o estilo para os teoremas
-% \newtheorem*{teorema}{Teorema} % definir o entorno 'teorema'
+% Matemáticas xerais. Inclue amsmath
+\RequirePackage{mathtools} 
 
-% para derivadas de todo tipo
+% Colección extendida de símbolos matemáticos. Inclue amsfonts
+\RequirePackage{amssymb} 
+
+% Para DERIVADAS de todo tipo
 \RequirePackage{diffcoeff}
+%                        sobreescribir
+%           orden deriv. orden deriv. (non me acordo como se usa)
+%               |           |
+% \difx.name.**[orden]<override>{variable(s)}{diferenciando}[pto. eval]
+%            ||
+%            |funcion antes da derivada
+%            funcion despois da derivada
+%
+% TIPOS:
+%   diff, difs, difc    -> normal,inline,operador
+%   diffp, difsp, difcp -> igual pero parciales
+%   difj                -> jacobiano
+%   difl                -> formas diferenciales
+% EXEMPLOS:
+% \diff{f(x)}{x}                          % normal
+% \difs[2]{f(x)}{x}                       % orden 2, inline
+% \difc[3]{f(x)}{x}[x=0]                  % orden 3, operador, evaluada nun punto
+% \diffp*{f(x)}{x}                        % parcial, diferenciando fora da fracción
+% \diff{\sin(x)}{x}[0]^{\mkern-10mu\pi/2} % \mkern para evaluacion superior bonita
+%
+% \difoverride{a+b-c}            % exponente no numerador
+% \diffp[a,b,c]{F(x,y,z)}{a,y,x} % [a,b,c] no denominador
 
-% Para integrales de todo tipo
+% Para INTEGRALES de todo tipo
 \RequirePackage{esint}
+% pode usarse a opcion [intlimits] para que os limites da integral estén máis
+% arriba/abaixo do normal
+% COMANDOS:
+% \i{4}nt, \idotsint, \[var]oi{2}nt, \varoi{2}nt, \[var]ointctrclockwise,
+% \[var]ointclockwise
 
 % Letras caligraficas moi reviradas, \mathscr
-\RequirePackage{mathrsfs} 
+\RequirePackage{mathrsfs}
 
 % Polinomios sinxelos. \polynomial{}, \polynomialfrac{}{}
 \RequirePackage{polynomial}
@@ -99,17 +123,33 @@
 
 % BIBLIOGRAFÍA =================================================================
 \RequirePackage[ % necesario ter instalado 'biber'
-    style = numeric,
+    style = alphabetic,
     natbib = true
 ]{biblatex}
 \addbibresource{bibliografia.bib}
+% IMPORTANTE:
+% A bibliografía suele dar bastante polo cu, polo que hai que tomar precaucións.
+% - Usar 'biblatex' en vez de bibtex, para unhas citas mais bonicas e
+%   sencillas. Espero subir algo máis detallado neste aspecto no futuro
+% - 'biblatex' necesita de 'biber', un programa aparte que noramalmente ven
+%   instalado cas distros de latex. UN DETALLE PUÑETERO: hai que ter MOITO
+%   coidado cas versions de 'biblatex' e de 'biber', actualizalas por separado
+%   pode dar dores de cabeza (podo confirmalo). Checkear ao final da páxina
+%   https://biblatex-biber.sourceforge.net/ para a compatibilidade de versións
+% - A maiores, sería boa cousa manter unha bibliografía de calidade. Existe
+%   'bibtool' que permite formatear arquivos *.bib, ordenalos, xerar nomes das
+%   entradas, filtrar por claves, etc. (moi útil, igual subo algún tip desto)
 
 
 % FIGURAS ======================================================================
-\RequirePackage{graphicx}  % pa facilitar o uso de \includegraphics
-\graphicspath{ {./imaxes/} }
-\RequirePackage{float}  % permite a colocación 'H' dos floats
-% \RequirePackage{subfig} % para colcar varias imaxes xuntas, ou subcaption
+% \RequirePackage{graphicx}    % pa facilitar o uso de \includegraphics
+% \graphicspath{ {./imaxes/} } % diretorio por defecto das imaxes (comodo)
+
+% \RequirePackage{float}      % permite a colocación 'H' dos floats
+% \RequirePackage{subcaption} % para colcar varias imaxes xuntas e tal
+
+% \RequirePackage{transparent} % imaxes transparentes
+% \RequirePackage{eso-pic}     % Imaxes encima do texto
 
 
 % CAPTIONS =====================================================================
@@ -149,7 +189,7 @@
     output-decimal-marker={.},
     % exponentes ------------------------
     exponent-mode=threshold,
-    exponent-thresholds=-3:2, % non usar certos exponentes
+    % exponent-thresholds=-3:2, % non usar exponentes 10^{-2,-1, 0, 1}
     % redondear -------------------------
     % round-mode=figures, % cifras sig
     % round-mode=places, % cantos decimales
@@ -168,7 +208,7 @@
     list-pair-separator={ e }
 }
 
-% Comandos para cargar datos en LaTeX usando datatool
+% Comandos para cargar datos en LaTeX usando datatool. Útil para as memorias.
 \newcommand{\DTLfetchsave}[5]{%
   \edtlgetrowforvalue{#1}{\dtlcolumnindex{#1}{#2}}{#3}%
   \dtlgetentryfromcurrentrow{#5}{\dtlcolumnindex{#1}{#4}}%
@@ -183,18 +223,7 @@
 }
 
 
-% CORES ========================================================================
-% 'xcolor' pa definir cores e toda a vaina. Opción 'table' pa poder colorear
-% celdas usando \cellcolor
-\RequirePackage[table]{xcolor}
-
-% ENCABEZADO/PE DE PAXINA ======================================================
-% \RequirePackage{fancyhdr} % pa facilitar a creacion cun par de comandos
-% \fancyhead[L]{encabezado na esquerda}
-% \fancyhead[R]{encabezado na dereita}
-% \fancyfoot[L]{pe de paxina esquerda}
-
-% para que o texto ao pe de paxina non esté indentado (quitarlle sangrías)
+% Para que o texto ao pe de paxina non esté indentado (quitarlle sangrías)
 % \RequirePackage[hang,flushmargin]{footmisc}
 
 
@@ -230,7 +259,7 @@
 \hypersetup{
     colorlinks,  % Colorear os links
     linkcolor={red!55!black},   %
-    citecolor={green!45!black}, % Cores queme gustan
+    citecolor={green!45!black}, % Cores que me gustan
     urlcolor={blue!80!black}    %
 }
 
@@ -238,9 +267,8 @@
 % FORMATEADO XERAL =============================================================
 
 % Usa un interlineado maior para separar párrafos en vez de usar sangría
-\setlength\parindent{0pt}  % eliminar a indentación
+\setlength\parindent{0pt}  % tamaño da indentación
 \setlength\parskip{0.7em}  % aumentar o tamaño do interlineado entre párrafos
-
 % \renewcommand*{\baselinestretch}{2.0} % interlineado global
 
 % para os conteos
@@ -253,4 +281,5 @@
 % \widowpenalty=10000
 
 % COMANDOS ÚTILES ==============================================================
-\providecommand{\abs}[1]{\lvert#1\rvert} % para o valor absoluto
+% Para o valor absoluto. Copiado das memorias de alguén
+\providecommand{\abs}[1]{\lvert#1\rvert}
