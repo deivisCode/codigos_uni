@@ -13,11 +13,11 @@ Estas son dúas clases que uso. Son casi iguais. Ambas teñen cousas como
 Diferenzas entre ambos
 
 apuntes.cls para uns apuntes privados (dame vergonza subilo)
-    - carga a clase 'book'
-    - configuración para encabezados
-    - epígrafes
-    - indice
-    - definicions e teoremas, con cores
+- carga a clase 'book'
+- configuración para encabezados
+- epígrafes
+- indice
+- definicions e teoremas, con cores
 
 memoria.cls
-    - carga de datos externos con datatool
+- carga de datos externos con datatool
