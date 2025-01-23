@@ -97,6 +97,7 @@
     {1em}% espaciado logo do encabezado
     {% estructura do encabezado
     \textbf{\underline{\thmname{#1}}}%
+    \textbf{\thmnumber{ #2}}%
     \textit{\thmnote{ (#3)}}%
     }
 
@@ -114,7 +115,7 @@
     }
 
 \theoremstyle{estiloteorema} % usar o estilo para os teoremas
-\newtheorem*{teorema}{Teorema} % definir o entorno 'teorema'
+\newtheorem{teorema}{Teorema} % definir o entorno 'teorema'
 
 \theoremstyle{estilodefinicion} % usar o estilo para as definicions
 \newtheorem{definicion}{Definición} % definir o entorno 'definicion'
@@ -123,7 +124,7 @@
 % entorno que sexa pa que esté coloreado, asique é util non solo para
 % teoremas/defs, etc. Recomendado por @egreg
 \tcolorboxenvironment{definicion}{
-    colback     = red!7!white, % cor do fondo
+    colback     = blue!7!white, % cor do fondo
     colframe    = black,         % cor do borde
     toprule     = 1pt,         % grosor do borde superior
     bottomrule  = 1pt,         % grosor do borde inferior
@@ -140,6 +141,27 @@
     % arc         = 2mm,         % curvatura das esquina
     before skip = \topsep,     %
     after skip  = \topsep,     %
+}
+
+% o mismo pero pa teoremas
+\tcolorboxenvironment{teorema}{
+    colback     = red!7!white,
+    colframe    = black,
+    toprule     = 1pt,
+    bottomrule  = 1pt,
+    leftrule    = 0pt,
+    rightrule   = 0pt,
+    % boxrule     = 0pt,
+    left        = 2pt,
+    right       = 2pt,
+    top         = 2pt,
+    bottom      = 2pt,
+    % boxsep      = 1pt,
+    oversize    = 2pt,
+    sharp corners,
+    % arc         = 2mm,
+    before skip = \topsep,
+    after skip  = \topsep,
 }
 
 % Para DERIVADAS de todo tipo
