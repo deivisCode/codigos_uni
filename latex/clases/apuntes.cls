@@ -207,9 +207,27 @@
 % BIBLIOGRAFÍA =================================================================
 \RequirePackage[ % necesario ter instalado 'biber'
     style = alphabetic,
-    natbib = true
+    natbib = true,
+    backref = true
 ]{biblatex}
 \addbibresource{bibliografia.bib}
+
+% Para as 'backref'. Ousexa, que na bibliografía se mostre onde citamos cada
+% cousa. Esto é sacado de stackoverflow. Pode facerse con
+% \DefineBibliographyStrings ou tamén con \renewbibmacro. Prefiero o segundo
+% porque permite máis customización. Véxase:
+% https://tex.stackexchange.com/questions/36307/formatting-back-references-in-bibliography
+\renewbibmacro*{pageref}{
+    \iflistundef{pageref}
+    {}
+    {
+    \printtext[brackets]{%
+        Referenciado en %
+        \printlist[‌pageref][-\value{listtotal}]{pageref}%
+        }
+    }
+}
+
 % IMPORTANTE:
 % A bibliografía suele dar bastante polo cu, polo que hai que tomar precaucións.
 % - Usar 'biblatex' en vez de bibtex, para unhas citas mais bonicas e
