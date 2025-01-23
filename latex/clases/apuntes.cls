@@ -399,10 +399,19 @@
 \setlength\parskip{0.7em}  % aumentar o tamaño do interlineado entre párrafos
 % \renewcommand*{\baselinestretch}{2.0} % interlineado global
 
-% para os conteos
-% \numberwithin{equation}{section}
-% \numberwithin{table}{section}
-% \numberwithin{figure}{section}
+% para os conteos, usando amsmath. Resetea o numero da ecuacion cada capítulo
+\numberwithin{equation}{chapter}
+
+% qué poñer no tag das ecuacions. [PARTE CAPITULO.ECUACION]
+\renewcommand\theequation{%
+\thepart\ \arabic{chapter}.\arabic{equation}%
+}
+
+% formatear o tag completo (#1). Realmente non sei pa qué fai falta esto, se xa
+% temos o renewcommand anterior
+\makeatletter
+\def\tagform@#1{\maketag@@@{[\ignorespaces#1\unskip\@@italiccorr]}}
+\makeatother
 
 % non me acordo que facia
 % \clubpenalty=10000
