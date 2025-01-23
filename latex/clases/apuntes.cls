@@ -382,20 +382,20 @@
 \RequirePackage{makeidx}
 \makeindex
 
-% hyperref debe ir ao final
+% hyperref debe colocarse case ao final
 \RequirePackage{hyperref}
 \hypersetup{
     colorlinks,  % Colorear os links
-    linkcolor={red!55!black},   %
-    citecolor={green!45!black}, % Cores que me gustan
-    urlcolor={blue!80!black}    %
+    linkcolor = {black},          % links internos, logo cambioo no doc.tex
+    citecolor = {green!45!black}, % citas bibliográficas
+    urlcolor  = {blue!80!black},  % urls
 }
 
 
 % FORMATEADO XERAL =============================================================
 
 % Usa un interlineado maior para separar párrafos en vez de usar sangría
-% \setlength\parindent{0pt}  % tamaño da indentación
+\setlength\parindent{0pt}  % tamaño da indentación
 \setlength\parskip{0.7em}  % aumentar o tamaño do interlineado entre párrafos
 % \renewcommand*{\baselinestretch}{2.0} % interlineado global
 
