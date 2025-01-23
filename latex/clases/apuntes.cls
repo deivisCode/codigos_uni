@@ -380,7 +380,7 @@
 % LINKS ========================================================================
 % Indice
 \RequirePackage{makeidx}
-% \makeindex
+\makeindex
 
 % hyperref debe ir ao final
 \RequirePackage{hyperref}
