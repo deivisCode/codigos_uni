@@ -1,15 +1,12 @@
-% Esta é unha clase que contén os paquetes, formatos e configuracións
-% principales que uso nos meus apuntes (privados). Para usalo solo hai que
-% poñer este arquivo no mesmo directorio que o documento principal e cargalo
-% con \documentclass{apuntes}. A clase esta está chea de opcións comentadas
-% para telas aquí presentes no caso de querer usalas
+% Este é un estilo contén os paquetes, formatos e configuracións principales
+% que uso nos meus apuntes (privados). Para usalo solo hai que poñer este
+% arquivo no mesmo directorio que o documento principal e cargalo con
+% \usepackage{apuntes}. Sirve pas clases 'article' e 'book'. Esta está cheo de
+% opcións comentadas para telas aquí presentes no caso de querer usalas
 
 
-\NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{apuntes}[2024/09/02 Clase das memorias de Deivis]
-
-% Usar a clase libro como base
-\LoadClass[11pt,a4paper]{book}
+\NeedsTeXFormat{LaTeX2e}[2023/11/01]
+\ProvidesPackage{apuntes}[2025/01/23 Paquete de estilos dos puntes de Deivis]
 
 
 % IDIOMA =======================================================================
@@ -206,8 +203,8 @@
 
 % BIBLIOGRAFÍA =================================================================
 \RequirePackage[ % necesario ter instalado 'biber'
-    style = alphabetic,
-    natbib = true,
+    style   = alphabetic,
+    natbib  = true,
     backref = true
 ]{biblatex}
 \addbibresource{bibliografia.bib}
@@ -300,49 +297,90 @@
 }
 
 
-
 % ENCABEZADO/PE DE PAXINA =====================================================
 
 % Pa facilitar a creacion cun par de comandos
 \RequirePackage{fancyhdr}
-\pagestyle{fancy}
 
-% eventualmente debería comentar que fai esto...
+% Por defecto temos o seguinte formato no header
+% [1.2 SECCION   CAP.1 CAPITULO][CAP.1 CAPITULO  1.2 SECCION]
+% Esquematicamente
+% [SEC    CAP][CAP    SEC]
+% As marcas por defecto están en maiscula, teñen texto de máis, e son feas. Pa
+% empezar cambiamolas
+%
+% Primeiro cambiamos a marca do CAP. \markboth mostrará o capitulo (#1) en
+% ambas paxinas na mesma posicion que antes. Agora será solo o nome do CAP
 \renewcommand{\chaptermark}[1]{ \markboth{#1}{} }
+
+% E agora a marca da SEC. Será o nome da sección simplemente
 \renewcommand{\sectionmark}[1]{ \markright{#1}{} }
 
-% contidos dos encabezados
-\fancyhead[EL]{\chaptername\ \thechapter} % par esquerda
-\fancyhead[ER]{\leftmark}                 % par dereita
-\fancyhead[OL]{}                          % impar esquerda
-\fancyhead[OR]{\rightmark}                % impar dereita
+% Por desgraza esto solo nos permite cambiar algo o formato, non a posicion.
+% Para eso uso \hancyhead.
+%
+% \leftmark corresponde a \chaptermark de antes.
+% \rightmark corresponde a \sectionmark de antes.
 
-% variables útiles, sacado do latex wikibook (lédeo)
-% \leftmark      current chapter name printed like ”CHAPTER 3. THIS IS THE % CHAPTER TITLE”
-% \rightmark     current section name printed like ”1.6. THIS IS THE SECTION % TITLE”
-% \chaptername   the name chapter in the current language. If this is English, it % will display ”Chapter”
-% \thechapter    current chapter number
-% \thesection    current section numbe
+% Como tamén quero engadir o nome da parte, uso o seguinte truco con \Oldpart
+% porque non hai unha variable por defecto que garde o nome da parte actual.
+% Hai que meter todo esto nun \@ifclassloaded{book} porque alguns comandos usan
+% \part, así podemos usar este arquivo con 'book' e con 'article'
+\@ifclassloaded{book}
+{% no caso de usar a clase 'book' (temos \part)
+
+    % véxase: https://tex.stackexchange.com/a/13395/326141
+    \let\Oldpart\part
+    \newcommand{\parttitle}{}
+    \renewcommand{\part}[1]{\Oldpart{#1}\renewcommand{\parttitle}{#1}}
+
+    % Limpamos todo
+    \fancyhf{}
+
+    % par esquerda
+    \fancyhead[EL]{
+        \textsc{\parttitle}.\ %
+        Cap{\'\i}tulo \arabic{chapter}:%
+        \textsc{\leftmark}
+    }
+    % par dereita
+    \fancyhead[ER]{Secci{\'o}n \arabic{section}:\textsc{\rightmark}}
+
+    % impar esquerda
+    \fancyhead[OL]{
+        \textsc{\parttitle}.\ %
+        Cap{\'\i}tulo \arabic{chapter}:%
+        \textsc{\leftmark}
+    }
+    % impar dereita
+    \fancyhead[OR]{Secci{\'o}n \arabic{section}:\textsc{\rightmark}}
+
+    % E poño os numeros das paxinas mellor
+    \fancyfoot[OR]{\thepage}
+    \fancyfoot[EL]{\thepage}
+}
+{% no caso de que a clase non sexa 'book' (non hai \part)
+    \fancyhead[EL]{\chaptername\ \thechapter} % par esquerda
+    \fancyhead[ER]{\leftmark}                 % par dereita
+    \fancyhead[OL]{}                          % impar esquerda
+    \fancyhead[OR]{\rightmark}                % impar dereita
+}
 
 % Liñas de separacion. É facil cambialas e poñerlle ornamentos. Para o simbolo
 % dunha orbita uso 'svrsymbols'. Pode usarse un ornamento calqueira. O
 % importante é redefinir 'headrule'. Exemplo copiado de overleaf
-% \RequirePackage{svrsymbols}
-% \renewcommand\headrule{
-%     \vspace{-6pt}
-%     \hrulefill
-%     \raisebox{-5.4pt}
-%     {\Huge\quad$\orbit$\quad}
-%     \hrulefill
-% }
+\RequirePackage{svrsymbols}
+\renewcommand\headrule{
+    \vspace{-6pt}
+    \hrulefill
+    \raisebox{-5.4pt}
+    {\Huge\quad$\orbit$\quad}
+    \hrulefill
+}
 
 % Para os grosores das liñas
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0pt}
-
-% Outra opcion é usar este paquete, pero apenas o mirei
-% \pagestyle{myheadings}
-% \markboth{PAR}{IMPAR}
 
 % Para que o texto ao pe de paxina non esté indentado (quitarlle sangrías)
 \RequirePackage[hang,flushmargin]{footmisc}
@@ -404,16 +442,23 @@
 % para os conteos, usando amsmath. Resetea o numero da ecuacion cada capítulo
 \numberwithin{equation}{chapter}
 
-% qué poñer no tag das ecuacions. [PARTE CAPITULO.ECUACION]
-\renewcommand\theequation{%
-\thepart\ \arabic{chapter}.\arabic{equation}%
+% qué poñer no tag das ecuacions. [PARTE CAPITULO.ECUACION]. Este paquete vale
+% para 'articulos' e 'libros' asique hai que chequear qué clase estamos usando
+\@ifclassloaded{book}
+{% se a clase é 'book'
+    \renewcommand\theequation{%
+    \thepart\ \arabic{chapter}.\arabic{equation}%
+    }
+}
+{% se estamos noutro caso, a efectos practicos 'article'
+    \renewcommand\theequation{%
+    \arabic{chapter}.\arabic{equation}%
+    }
 }
 
 % formatear o tag completo (#1). Realmente non sei pa qué fai falta esto, se xa
 % temos o renewcommand anterior
-\makeatletter
 \def\tagform@#1{\maketag@@@{[\ignorespaces#1\unskip\@@italiccorr]}}
-\makeatother
 
 % non me acordo que facia
 % \clubpenalty=10000
@@ -439,3 +484,5 @@
 
 % para vectores
 % \newcommand{\ve}[1]{\mathbf{#1}}
+
+\endinput
