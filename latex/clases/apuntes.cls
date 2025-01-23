@@ -420,8 +420,22 @@
 % \widowpenalty=10000
 
 % COMANDOS ÚTILES ==============================================================
+
 % Para o valor absoluto. Copiado das memorias de alguén
 \providecommand{\abs}[1]{\lvert#1\rvert}
 
 % novo comando pa que sea bonito referenciar cousas
 \newcommand{\referencia}[1]{[ \textbf{\ref{#1}} ]}
+
+% Comandos para operadored diferenciales usuales
+\newcommand{\gradiente}{\operatorname{grad}}
+\newcommand{\gr}[1]{\gradiente\left(#1\right)}
+
+\newcommand{\diverxencia}{\operatorname{div}}
+\newcommand{\dv}[1]{\diverxencia\left(#1\right)}
+
+\newcommand{\rotacional}{\operatorname{rot}}
+\newcommand{\rt}[1]{\rotacional\left(#1\right)}
+
+% para vectores
+% \newcommand{\ve}[1]{\mathbf{#1}}
