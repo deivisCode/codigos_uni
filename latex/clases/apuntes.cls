@@ -346,6 +346,8 @@
 
 % Para que o texto ao pe de paxina non esté indentado (quitarlle sangrías)
 \RequirePackage[hang,flushmargin]{footmisc}
+% Aprobeito e tamén cambio como se ven as footnotes
+\renewcommand{\thefootnote}{[\arabic{footnote}]}
 
 % Para os epígrafes, tipicas frases ao comezo dun capítulo
 \RequirePackage{epigraph}
@@ -420,3 +422,6 @@
 % COMANDOS ÚTILES ==============================================================
 % Para o valor absoluto. Copiado das memorias de alguén
 \providecommand{\abs}[1]{\lvert#1\rvert}
+
+% novo comando pa que sea bonito referenciar cousas
+\newcommand{\referencia}[1]{[ \textbf{\ref{#1}} ]}
