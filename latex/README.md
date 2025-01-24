@@ -30,5 +30,5 @@ na terminal cada vez
 
 ## Makefile
 
-Porque incluso escribir 'latexmkrc documento.tex' me é cansino. Así pódese
+Porque incluso escribir 'latexmk documento.tex' me é cansino. Así pódese
 facer 'make' e pista. Tamén 'make limpa' para borrar todos os arquivos xerados.
