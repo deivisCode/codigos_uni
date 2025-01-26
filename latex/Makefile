@@ -5,6 +5,7 @@ rula: documento.tex
 
 limpa:
 	latexmk -C
+	latexmk -norc -C
 	rm -rf .out .aux
 
 .PHONY: rula limpa
