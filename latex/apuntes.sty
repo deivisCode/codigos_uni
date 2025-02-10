@@ -1,28 +1,12 @@
 % Este é un estilo contén os paquetes, formatos e configuracións principales
 % que uso nos meus apuntes (privados). Para usalo solo hai que poñer este
-% arquivo no mesmo directorio que o documento principal e cargalo con
-% \usepackage{apuntes}. Sirve pas clases 'article' e 'book'. Esta está cheo de
+% arquivo e ./comandos no mesmo directorio que o documento principal e cargalo
+% con \usepackage{apuntes}. Sirve pas clases 'article' e 'book'. Está cheo de
 % opcións comentadas para telas aquí presentes no caso de querer usalas
 
-
 \NeedsTeXFormat{LaTeX2e}[2023/11/01]
-\ProvidesPackage{apuntes}[2025/01/23 Paquete de estilos dos puntes de Deivis]
+\ProvidesPackage{apuntes}[2025/02/09 Paquete de estilos dos puntes de Deivis]
 
-
-% IDIOMA =======================================================================
-\RequirePackage[galician]{babel} % usar galego (como debe ser)
-
-% Para desactivar o sistema de abreviacións, que conflite cas comas decimales
-% e en concreto cas opcions de 'siunitx'. Tamén se podería usar \decimalcomma,
-% \decimalpoint ou \galiciandecimal{.}, pero eso solo determinaría qué simbolo
-% usar en concreto. Eu quero desactivar a funcionalidade por completo
-\renewcommand\shorthandsgalician{}
-
-% Usar babel pode fastidiar as citas con biblatex, asique hai que usar 'csquotes'
-\RequirePackage{csquotes}
-
-
-% XEOMETRÍA DO DOCUMENTO =======================================================
 \RequirePackage[
 % xeral ---------------------------------------------------------
     paper          = a4paper, % tamaño do papel
@@ -60,20 +44,13 @@
     % pass        % desactivar todo excepto showframe
 ]{geometry}
 
-% FORMAS E TAL =================================================================
+% Para encaixar mellor o texto (a veces fállame pero vese ben)
+\RequirePackage{microtype}
 
-% Para crear un cadro con texto dentro to guapo
-% \RequirePackage{framed}
-
-% Pa definir cores e toda a vaina.
-\RequirePackage{xcolor}
-% Opción 'table' pa poder colorear celdas usando \cellcolor
-
-% tamen pa facer fondos, caixas bordes e tal
-\RequirePackage{tcolorbox}
-
-
-% MATES BASICAS ================================================================
+% Usa un interlineado maior para separar párrafos en vez de usar sangría
+\setlength\parindent{0pt}  % tamaño da indentación
+\setlength\parskip{0.7em}  % aumentar o tamaño do interlineado entre párrafos
+% \renewcommand*{\baselinestretch}{2.0} % interlineado global
 
 % Matemáticas xerais. Inclue amsmath
 \RequirePackage{mathtools}
@@ -117,7 +94,37 @@
 \theoremstyle{estilodefinicion} % usar o estilo para as definicions
 \newtheorem{definicion}{Definición} % definir o entorno 'definicion'
 
-% Agora usamos 'tcolorbox' para colorear o entorno este. Esto redefine o
+% Pa definir cores e toda a vaina.
+% Opción 'table' pa poder colorear celdas usando \cellcolor
+\RequirePackage{xcolor}
+% \definecolor{roxobonito}{HTML}{ff0000}
+
+% TikZ para os gráficos
+\RequirePackage{tikz}
+\usetikzlibrary{calc} % para facer calculos cas posicions
+
+% \RequirePackage{graphicx}    % pa facilitar o uso de \includegraphics
+% \graphicspath{ {./imaxes/} } % diretorio por defecto das imaxes (comodo)
+% \RequirePackage{float}       % permite a colocación 'H' dos floats
+% \RequirePackage{subcaption}  % para colcar varias imaxes xuntas e tal
+% \RequirePackage{transparent} % imaxes transparentes
+% \RequirePackage{eso-pic}     % Imaxes encima do texto
+% Para cambiar cousas relacionadas cos estilos das figuras, tablas, etc.
+% \RequirePackage{caption}
+% estilos das figuras
+% \captionsetup[figure]{
+%     labelfont=bf, % tipografia usada
+%     name=Figurilla% % nome
+% }
+% \captionsetup[table]{
+%     labelfont=bf,
+%     name=Tabla%
+% }
+
+% Esto e pa facer recuadros, fondos, etc.
+\RequirePackage{tcolorbox}
+
+% Agora usamos 'tcolorbox' para colorear os entornos estes. Esto redefine o
 % entorno que sexa pa que esté coloreado, asique é util non solo para
 % teoremas/defs, etc. Recomendado por @egreg
 \tcolorboxenvironment{definicion}{
@@ -195,6 +202,7 @@
 % \[var]ointclockwise
 
 % Letras caligraficas moi reviradas, \mathscr
+% alternativa: mathalpha
 \RequirePackage{mathrsfs}
 
 % Polinomios sinxelos. \polynomial{}, \polynomialfrac{}{}
@@ -203,78 +211,12 @@
 % Para tensores e cousas con indices
 \RequirePackage{tensor}
 
+% Cargar os comandos definidos
+\input{./comandos.tex}
 
-% BIBLIOGRAFÍA =================================================================
-\RequirePackage[ % necesario ter instalado 'biber'
-    style   = alphabetic,
-    natbib  = true,
-    backref = true
-]{biblatex}
-\addbibresource{bibliografia.bib}
-
-% Para as 'backref'. Ousexa, que na bibliografía se mostre onde citamos cada
-% cousa. Esto é sacado de stackoverflow. Pode facerse con
-% \DefineBibliographyStrings ou tamén con \renewbibmacro. Prefiero o segundo
-% porque permite máis customización. Véxase:
-% https://tex.stackexchange.com/questions/36307/formatting-back-references-in-bibliography
-\renewbibmacro*{pageref}{
-    \iflistundef{pageref}
-    {}
-    {
-    \printtext[brackets]{%
-        Referenciado en %
-        \printlist[‌pageref][-\value{listtotal}]{pageref}%
-        }
-    }
-}
-
-% IMPORTANTE:
-% A bibliografía suele dar bastante polo cu, polo que hai que tomar precaucións.
-% - Usar 'biblatex' en vez de bibtex, para unhas citas mais bonicas e
-%   sencillas. Espero subir algo máis detallado neste aspecto no futuro
-% - 'biblatex' necesita de 'biber', un programa aparte que noramalmente ven
-%   instalado cas distros de latex. UN DETALLE PUÑETERO: hai que ter MOITO
-%   coidado cas versions de 'biblatex' e de 'biber', actualizalas por separado
-%   pode dar dores de cabeza (podo confirmalo). Checkear ao final da páxina
-%   https://biblatex-biber.sourceforge.net/ para a compatibilidade de versións
-% - A maiores, sería boa cousa manter unha bibliografía de calidade. Existe
-%   'bibtool' que permite formatear arquivos *.bib, ordenalos, xerar nomes das
-%   entradas, filtrar por claves, etc. (moi útil, igual subo algún tip desto)
-
-
-% FIGURAS ======================================================================
-% \RequirePackage{graphicx}    % pa facilitar o uso de \includegraphics
-% \graphicspath{ {./imaxes/} } % diretorio por defecto das imaxes (comodo)
-
-% \RequirePackage{float}      % permite a colocación 'H' dos floats
-% \RequirePackage{subcaption} % para colcar varias imaxes xuntas e tal
-
-% \RequirePackage{transparent} % imaxes transparentes
-% \RequirePackage{eso-pic}     % Imaxes encima do texto
-
-
-% CAPTIONS =====================================================================
-% Para cambiar cousas relacionadas cos estilos das figuras, tablas, etc.
-\RequirePackage{caption}
-% estilos das figuras
-\captionsetup[figure]{
-    labelfont=bf, % tipografia usada
-    % name=Figurilla% % nome
-}
-\captionsetup[table]{
-    labelfont=bf,
-    % name=Tabla%
-}
-
-
-% TABLAS =======================================================================
-% \RequirePackage{multirow} % tablas con celdas unidas
-% \RequirePackage{booktabs} % non e necesario pero aos nerds de Latex gustalle
-
-
-% UNIDADES =====================================================================
 % Para usar unidades e numeros de forma corrrecta e estándar con \num{},
 % \unit{}, \qty{}, etc. (coidado, siunitx v.3 \qty conflite con physics \qty)
+% (inda que en realidade, mellor non usar 'physics')
 \RequirePackage{siunitx}
 \sisetup{
     output-decimal-marker={.},
@@ -299,8 +241,77 @@
     list-pair-separator={ e }
 }
 
+% Tipografías. Facelo a fondo é un rollo asique intentarei explicalo.
+% LaTeX por defecto usa tipografías feitas con metafont, que deben ter uns 40
+% anos mínimo. Estas veñen en paquetes normales e poden usarse facendo, por
+% exemplo:
+% \RequirePackage[default]{fontsetup}
+% Para cargar (creo que era) Computer Modern. Outras veñen con outros paquetes,
+% como Latin Modern, ou o que sexa. O ideal sería cargar tipografías do noso
+% sistema, sexan cales sexan. Por exemplo 'FiraCode Nerd Font' (que estou
+% usando na terminal pa escribir esto), 'Comic Sans', 'London Old School' (a
+% que usei pa vunha tatuaxe), ou a que sea. Non estamos limitados ás que hai en
+% CTAN. O problema é que sendo Latex tan vello, non é moi directo facelo.
+%
+% 0) Hai que ter as tipografías instaladas no sistema. En Linux só hai que
+%    metelas na carpeta correspondente en ~/.local/share/fonts Por exemplo:
+%    ~/.local/share/fonts/FiraCode/FiraCodeNerdFont-Bold.ttf Ou se sodes vagos,
+%    abrilas, e darlle a instalar.
+% 1) Hai que usar LuaLatex, o cal non debería ser problema
+% 2) Hai que usra 'fontspec', o cal nos permite seleccionar as tipografías cos
+%    nomes que temos no ordenador, de xeito normal.
+% 3) Hai que usar \setmainfont, escoller a tipografía xeral, e as secundarias
+%    (negriña, cursiva, etc.)
+% 4) Os pasos anteriores son para as tipografías do modo texto. Para as
+%    matemáticas hai que usar 'unicode-math' que nos permite facer o mesmo truco.
+%    Seleccionar as tipografías, a principal e as secundarias. Neste caso con
+%    \setmathfont
+%
+% Ollo, 'unicode-math' debe cargarse DESPOIS dos paquetes de matemáticas.
+%
+% Ao usar LuaLatex imos ter acceso ao comando
+% {\fontsize{4000pt}{20pt}\selectfont TEXTOOO}
+% para cambiar tamaños sen límite, como coas tipografías normais.
+%
+% Para checkear na terminal as tipografías usadas pode usarse:
+% $ pdffonts documento.pdf
+% $ mutool extract documento.pdf # para extraelas
+%
+% Recoñezo que esto é un lio tremendo :(
 
-% ENCABEZADO/PE DE PAXINA =====================================================
+% Para as tipografías do texto
+\RequirePackage{fontspec}
+\setmainfont[
+    BoldFont       = NewCM10-Bold,
+    ItalicFont     = NewCM08-Italic,
+    BoldItalicFont = NewCM10-BoldItalic,
+]{NewCM08-Regular}
+
+% Para as tipografías das matemáticas.
+\RequirePackage{unicode-math}
+\setmathfont{NewCMMath-Regular}
+
+
+% para os conteos, usando amsmath. Resetea o numero da ecuacion cada capítulo
+\numberwithin{equation}{chapter}
+
+% qué poñer no tag das ecuacions. [PARTE CAPITULO.ECUACION]. Este paquete vale
+% para 'articulos' e 'libros' asique hai que chequear qué clase estamos usando
+\@ifclassloaded{book}
+{% se a clase é 'book'
+    \renewcommand\theequation{%
+    \thepart\ \arabic{chapter}.\arabic{equation}%
+    }
+}
+{% se estamos noutro caso, a efectos practicos 'article'
+    \renewcommand\theequation{%
+    \arabic{chapter}.\arabic{equation}%
+    }
+}
+
+% formatear o tag completo (#1). Realmente non sei pa qué fai falta esto, se xa
+% temos o renewcommand anterior
+\def\tagform@#1{\maketag@@@{[\ignorespaces#1\unskip\@@italiccorr]}}
 
 % Pa facilitar a creacion cun par de comandos
 \RequirePackage{fancyhdr}
@@ -371,56 +382,117 @@
 
 % Liñas de separacion. É facil cambialas e poñerlle ornamentos. Para o simbolo
 % dunha orbita uso 'svrsymbols'. Pode usarse un ornamento calqueira. O
-% importante é redefinir 'headrule'. Exemplo copiado de overleaf
-\RequirePackage{svrsymbols}
+% importante é redefinir 'headrule' e 'footrule'. Exemplo copiado de overleaf
+% \RequirePackage{svrsymbols} % permite usar $\orbit$ (carga tipografias)
+
 \renewcommand\headrule{
     \vspace{-6pt}
     \hrulefill
     \raisebox{-5.4pt}
-    {\Huge\quad$\orbit$\quad}
+    {\Huge\quad$E = mc^2$\quad}
     \hrulefill
 }
 
-% Para os grosores das liñas
-\renewcommand{\headrulewidth}{0.5pt}
-\renewcommand{\footrulewidth}{0pt}
+% \renewcommand\footrule{
+%     \vspace{-6pt}
+%     {\hrulefill}
+%     \raisebox{-5.4pt}
+%     {Esta é a liña do pe de paxina!}
+%     {\hrulefill}
+% }
+
+% Tamén se poderian cambiar de forma máis sutil, no casode que non se queira
+% meter texto no medio
+% \let\Oldfoot\footrule
+% \renewcommand\footrule{\color{violet}\Oldfoot}
+
+% No caso de non redefinir \foot/headrule, poderiamos cambiarlle os grosores
+% simplemente con
+% \renewcommand{\headrulewidth}{0.5pt}
+% \renewcommand{\footrulewidth}{0pt}
+
+% Para os grosores das liñas no caso de que se redefina \head/foot/rule. Hai
+% que engrosar \hrulefill. Véxase:
+% https://tex.stackexchange.com/a/65734
+% \def\hrulefill{\leavevmode\leaders\hrule height 3pt\hfill\kern\z@}
 
 % Para que o texto ao pe de paxina non esté indentado (quitarlle sangrías)
 \RequirePackage[hang,flushmargin]{footmisc}
 % Aprobeito e tamén cambio como se ven as footnotes
 \renewcommand{\thefootnote}{[\arabic{footnote}]}
 
+% UNS PAQUETES QUE NON SEI CATEGORIZAR %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \RequirePackage{multirow} % tablas con celdas unidas
+% \RequirePackage{booktabs} % non e necesario pero aos nerds de Latex gustalle
+
+% Para colocar texto de 'proba' pa ver se as cousas encaixan ben
+% \RequirePackage{lipsum}
 % Para os epígrafes, tipicas frases ao comezo dun capítulo
 \RequirePackage{epigraph}
 
-
-% LISTAS =======================================================================
+% \RequirePackage{enumitem}
 % Pa configurar facilmente listas e tal. Permite opcions tipo
 % \begin{enumerate}[label=(arabic*)]
-% \RequirePackage{enumitem}
 
 % Para facelo a man, pode facerse o sequinte. Poden poñerse dentro do
 % entorno correspondente e ser locales
-\renewcommand{\labelitemi}{\arabic{itemi}}
-\renewcommand{\labelitemii}{\arabic{itemi}.\arabic{itemii}}
-\renewcommand{\labelenumi}{\arabic{enumi}}
-\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
-\renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}}
-\renewcommand{\labelenumiv}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.\arabic{enumiv}}
+% \renewcommand{\labelitemi}{\arabic{itemi}}
+% \renewcommand{\labelitemii}{\arabic{itemi}.\arabic{itemii}}
+% \renewcommand{\labelenumi}{\arabic{enumi}}
+% \renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}}
+% \renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}}
+% \renewcommand{\labelenumiv}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.\arabic{enumiv}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\RequirePackage[ % necesario ter instalado 'biber'
+    style   = alphabetic,
+    natbib  = true,
+    backref = true
+]{biblatex}
+\addbibresource{bibliografia.bib}
 
-% EXTRAS =======================================================================
-% Para encaixar mellor o texto (a veces fállame pero vese ben)
-\RequirePackage{microtype}
+% Para as 'backref'. Ousexa, que na bibliografía se mostre onde citamos cada
+% cousa. Esto é sacado de stackoverflow. Pode facerse con
+% \DefineBibliographyStrings ou tamén con \renewbibmacro. Prefiero o segundo
+% porque permite máis customización. Véxase:
+% https://tex.stackexchange.com/questions/36307/formatting-back-references-in-bibliography
+\renewbibmacro*{pageref}{
+    \iflistundef{pageref}
+    {}
+    {
+    \printtext[brackets]{%
+        Referenciado en %
+        \printlist[‌pageref][-\value{listtotal}]{pageref}%
+        }
+    }
+}
 
-% Para crear un cadro con texto dentro to guapo
-% \RequirePackage{framed}
+% IMPORTANTE:
+% A bibliografía suele dar bastante polo cu, polo que hai que tomar precaucións.
+% - Usar 'biblatex' en vez de bibtex, para unhas citas mais bonicas e
+%   sencillas. Espero subir algo máis detallado neste aspecto no futuro
+% - 'biblatex' necesita de 'biber', un programa aparte que noramalmente ven
+%   instalado cas distros de latex. UN DETALLE PUÑETERO: hai que ter MOITO
+%   coidado cas versions de 'biblatex' e de 'biber', actualizalas por separado
+%   pode dar dores de cabeza (podo confirmalo). Checkear ao final da páxina
+%   https://biblatex-biber.sourceforge.net/ para a compatibilidade de versións
+% - A maiores, sería boa cousa manter unha bibliografía de calidade. Existe
+%   'bibtool' que permite formatear arquivos *.bib, ordenalos, xerar nomes das
+%   entradas, filtrar por claves, etc.
 
-% Para colocar texto de 'proba' pa ver se as cousas encaixan ben
-% \RequirePackage{lipsum} % dummy text
+\RequirePackage[galician]{babel} % usar galego (como debe ser)
 
+% Para desactivar o sistema de abreviacións, que conflite cas comas decimales
+% e en concreto cas opcions de 'siunitx'. Tamén se podería usar \decimalcomma,
+% \decimalpoint ou \galiciandecimal{.}, pero eso solo determinaría qué simbolo
+% usar en concreto. Eu quero desactivar a funcionalidade por completo
+% \renewcommand\shorthandsgalician{}
 
-% LINKS ========================================================================
+% Usar babel pode fastidiar as citas con biblatex, asique hai que usar 'csquotes'
+\RequirePackage{csquotes}
+
 % Indice
 \RequirePackage{makeidx}
 \makeindex
@@ -428,74 +500,14 @@
 % hyperref debe colocarse case ao final
 \RequirePackage{hyperref}
 \hypersetup{
+    unicode,
     colorlinks,  % Colorear os links
     linkcolor = {black},          % links internos, logo cambioo no doc.tex
     citecolor = {green!45!black}, % citas bibliográficas
     urlcolor  = {blue!80!black},  % urls
 }
 
-
-% FORMATEADO XERAL =============================================================
-
-% Usa un interlineado maior para separar párrafos en vez de usar sangría
-\setlength\parindent{0pt}  % tamaño da indentación
-\setlength\parskip{0.7em}  % aumentar o tamaño do interlineado entre párrafos
-% \renewcommand*{\baselinestretch}{2.0} % interlineado global
-
-% para os conteos, usando amsmath. Resetea o numero da ecuacion cada capítulo
-\numberwithin{equation}{chapter}
-
-% qué poñer no tag das ecuacions. [PARTE CAPITULO.ECUACION]. Este paquete vale
-% para 'articulos' e 'libros' asique hai que chequear qué clase estamos usando
-\@ifclassloaded{book}
-{% se a clase é 'book'
-    \renewcommand\theequation{%
-    \thepart\ \arabic{chapter}.\arabic{equation}%
-    }
-}
-{% se estamos noutro caso, a efectos practicos 'article'
-    \renewcommand\theequation{%
-    \arabic{chapter}.\arabic{equation}%
-    }
-}
-
-% formatear o tag completo (#1). Realmente non sei pa qué fai falta esto, se xa
-% temos o renewcommand anterior
-\def\tagform@#1{\maketag@@@{[\ignorespaces#1\unskip\@@italiccorr]}}
-
-% non me acordo que facia
-% \clubpenalty=10000
-% \widowpenalty=10000
-
-% COMANDOS ÚTILES ==============================================================
-% Véxase: https://tex.stackexchange.com/a/67529/326141
-
-% Para o valor absoluto. Copiado das memorias de alguén
-\providecommand{\abs}[1]{\lvert#1\rvert}
-
-% novo comando pa que sea bonito referenciar cousas
-\newcommand{\referencia}[1]{[\textbf{\ref{#1}}]}
-
-% Comandos para operadored diferenciales usuales
-\newcommand{\gradiente}{\operatorname{grad}}
-\newcommand{\gr}[1]{\gradiente\left(#1\right)}
-
-\newcommand{\diverxencia}{\operatorname{div}}
-\newcommand{\dv}[1]{\diverxencia\left(#1\right)}
-
-\newcommand{\rotacional}{\operatorname{rot}}
-\newcommand{\rt}[1]{\rotacional\left(#1\right)}
-
-\newcommand{\orden}{\operatorname{Ord}}
-\newcommand{\ord}[1]{\ensuremath{\orden\left(#1\right)}}
-
-\newcommand{\subgrupo}{\ensuremath{\le}}
-\newcommand{\subgrupopropio}{\ensuremath{<}}
-\newcommand{\subgruponormal}{\ensuremath{\trianglelefteq}}
-\newcommand{\subgruponormalpropio}{\ensuremath{\triangleleft}}
-\newcommand{\combinacion}[1]{\ensuremath{\left<#1\right>}}
-
-% para vectores
-% \newcommand{\ve}[1]{\mathbf{#1}}
+% Para log máis detallado. A veces falla!
+% \RequirePackage{dprogress}
 
 \endinput

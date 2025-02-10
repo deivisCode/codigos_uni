@@ -1,0 +1,59 @@
+
+% Para o valor absoluto. Copiado das memorias de alguén
+\providecommand{\abs}[1]{\lvert#1\rvert}
+
+% novo comando pa que sea bonito referenciar cousas
+\newcommand{\referencia}[1]{[\textbf{\ref{#1}}]}
+
+% :FACER: diferencia entre esto e \DeclasreMathOperator
+% Comandos para operadored diferenciales usuales
+% Véxase: https://tex.stackexchange.com/a/67529/326141
+\newcommand{\gradiente}{\operatorname{grad}}
+\newcommand{\gr}[1]{\gradiente\left(#1\right)}
+
+\newcommand{\diverxencia}{\operatorname{div}}
+\newcommand{\dv}[1]{\diverxencia\left(#1\right)}
+
+\newcommand{\rotacional}{\operatorname{rot}}
+\newcommand{\rt}[1]{\rotacional\left(#1\right)}
+
+\newcommand{\orden}{\operatorname{Ord}}
+\newcommand{\ord}[1]{\ensuremath{\orden\left(#1\right)}}
+
+\newcommand{\subgrupo}{\ensuremath{\le}}
+\newcommand{\subgrupopropio}{\ensuremath{<}}
+\newcommand{\subgruponormal}{\ensuremath{\trianglelefteq}}
+\newcommand{\subgruponormalpropio}{\ensuremath{\triangleleft}}
+\newcommand{\combinacion}[1]{\ensuremath{\left<#1\right>}}
+
+% Espazos de matrices
+% :FACER: mais tipos, con argumentos opcionais de letras n,m
+\newcommand{\Mnn}[1]{\mathcal{M}_{n\times n}(\mathbb{#1})}
+
+% Grupos
+% :FACER: mais tipos, mellores nomes, argumento opcional pa mostrar o corpo
+% \newcommand{\GL}[1]{\operatorname{GL}\ensuremath{(#1)}}
+\newcommand{\SL}[1]{\operatorname{SL}\ensuremath{(#1)}}
+\newcommand{\SU}[1]{\operatorname{SU}\ensuremath{(#1)}}
+\newcommand{\SO}[1]{\operatorname{SO}\ensuremath{(#1)}}
+\newcommand{\U}[1]{\operatorname{U}\ensuremath{(#1)}}
+\newcommand{\Ort}[1]{\operatorname{O}\ensuremath{(#1)}}
+
+% Alxebras
+\newcommand{\gl}[1]{\operatorname{\mathfrak{gl}}\ensuremath{(#1)}}
+
+% :FACER: facer o resto con esto de ifthen
+% https://stackoverflow.com/a/7314951
+\RequirePackage{ifthen}
+\newcommand{\GL}[2][]{
+    \ifthenelse { \equal {#1} {}}
+        {\def\temp{\operatorname{GL}\ensuremath{(#2)}}}
+        {\def\temp{\operatorname{GL}\ensuremath{(#2,\mathbb{#1})}}}
+    \temp
+}
+
+
+% para vectores
+% \newcommand{\ve}[1]{\mathbf{#1}}
+
+\endinput
